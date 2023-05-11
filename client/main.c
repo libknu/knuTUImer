@@ -41,7 +41,8 @@ int main(void){
     //login();
     //creatID();
     //stopwatch_mode();
-    timer_mode();
+    //timer_mode();
+    pomodoro_mode();
 }
 
 void first_page(){
@@ -230,8 +231,8 @@ void mypage(){
         initscr();
         erase();// 화면 내용을 다 지운 뒤
         move(2, 2);
-        printw("%c",command);
-        // addstr("Please enter the correct key.");
+        //printw("%c",command);
+        addstr("Please enter the correct key.");
         refresh();
         sleep(1);//1초간 오류를 보여주고
         endwin();
@@ -553,7 +554,6 @@ void timer_mode(){ //time down
                 addstr("                     ");
                 move(3, 30);
                 addstr("running...");
-                running_flag = true;
             }
             else if (command == '2' && running_flag){//작동 중지
                 time(&pause_start_time);
@@ -562,7 +562,6 @@ void timer_mode(){ //time down
                 addstr("                     ");
                 move(3, 30);
                 addstr("pause!");
-                running_flag = false;
             }
             else if (command == '3'){
                 in_timer_flag = false;
@@ -591,21 +590,37 @@ void timer_mode(){ //time down
         usleep(100000);
     }    
     endwin();
-    //여기서 남은 시간 저장
+    //여기서 elapsed_seconds저장
 }
 
 void pomodoro_mode(){
+    int goal_sets;
+    int command;
 
-    char temp_set[4];
-    int n_sets;
-    int i;
-    char ch;
     bool running_flag = false; //포모도로 시간이 흐르는 중인지 확인하는 플래그
     bool in_pomo_flag = true;  //포모도로 타이머 자체가 작동중인지 확인하는 플래그. false면 함수가 끝남
-    int set_counter = 0;
-    int work_duration = 25 * 60;
-    int rest_duration = 5 * 60;
-    int remaining_seconds = work_duration;
+
+    bool start_flag=true;
+
+    time_t start_time, current_time, pause_start_time, pause_end_time;
+
+    // time_t work_start_time, work_current_time, work_pause_start_time, work_pause_end_time;
+    // time_t rest_start_time, rest_current_time, rest_pause_start_time, rest_pause_end_time;
+    
+    double pause_time, elapsed_seconds;
+
+    double work_pause_time; //공부중일 때, 현재 세트에서의 일시중지 시간의 총합
+    double work_elapsed_seconds; //공부중일 때, 현재 세트에서의 총 작동 시간. 현재시간-시작시간-일시중지시간
+    double rest_pause_time; //쉬는시간일 때, 현재 세트에서의 일시중지 시간의 총합
+    double rest_elapsed_seconds; //쉬는 시간일 때, 현재 세트에서의 총 작동 시간
+    double total_elapsed_seconds=0; //총 공부시간(저장용)
+    int hours, minutes, seconds;
+    int set_counter = 0; //지금까지 몇 세트 했는지 저장
+
+    int work_duration = 25*60; //공부는 25분간
+    int rest_duration = 5*60; //휴식은 5분간 
+    int remaining_seconds = work_duration;//쉬는 시간이든 공부 시간이든, 남은 시간
+    int current_duration = work_duration;
     bool work_period_flag = true; //25분 사이클 안에 있는지 표시하는 플래그
 
     initscr();
@@ -616,23 +631,11 @@ void pomodoro_mode(){
     move(3, 2);     addstr("Enter the number of sets: ");
     curs_set(1);
 
-    i = 0;
-    while ((ch = getch()) != '\n') {
-        if (ch == 127) { // Backspace 처리. 127은 백스페이스 키의 아스키 넘버임
-            if (i > 0) {
-                i--;
-                move(4, 9 + i);
-                addch(' ');
-                move(4, 9 + i);
-            }
-        } else {
-            temp_set[i++] = ch;
-            addch(ch);
-        }
-        refresh();
-    }
-    temp_set[i] = '\0';
-    n_sets=atoi(temp_set);
+    nodelay(stdscr, FALSE);
+    echo();
+    scanw("%d", &goal_sets);
+    nodelay(stdscr, TRUE);
+    noecho();
     curs_set(0);
 
     erase();
@@ -643,49 +646,97 @@ void pomodoro_mode(){
     refresh();
 
 
-    while (in_pomo_flag && set_counter < n_sets) {
-        ch = getch();
-        if (ch == '1' && !running_flag) {
-            move(4, 20);
-            addstr("                ");
-            move(4, 20);
-            addstr("running...");
-            running_flag = true;
-        } else if (ch == '2' && running_flag) {
-            move(4, 20);
-            addstr("                ");
-            move(4, 20);
-            addstr("pause!");
-            running_flag = false;
-        } else if (ch == '3') {
-            in_pomo_flag = false;
+    if(start_flag == true){ //처음 1을 입력하기 전에 표시할 내용
+        move(3, 2);
+        printw("Work: Set %d/%d ",1, goal_sets);
+        move(4, 2);
+        printw("remaining %02d:%02d",25, 0); 
+    }
+    while (in_pomo_flag && set_counter < goal_sets) {
+        command = getch();
+        if (command != ERR){
+            if (command == '1' && !running_flag) {//작동중
+                running_flag = true;
+                if (start_flag == true){ // 첫 시작일때
+                    time(&start_time);
+                    start_flag = false;
+                }
+                else{ //일지중지 후 재개했을 때
+                    if(work_period_flag)//일하는 중이면
+                        time(&pause_end_time);
+                        pause_time += difftime(pause_end_time, pause_start_time);
+                }
+                move(4, 20);
+                addstr("                ");
+                move(4, 20);
+                addstr("running...");
+                running_flag = true;
+            } else if (command == '2' && running_flag) {//일시중지중. 공부중, 일하는 중 모두에서 작동
+                time(&pause_start_time);
+                running_flag = false;
+                move(4, 20);
+                addstr("                ");
+                move(4, 20);
+                addstr("pause!");
+                running_flag = false;
+            } else if (command == '3') {
+                if(work_period_flag){//공부를 하던 중 3이 입력되면 지금까지의 공부 시간을 기록
+                    total_elapsed_seconds+=elapsed_seconds;
+                }
+                in_pomo_flag = false;
+            }
         }
 
         if (running_flag) {
-            if (remaining_seconds <= 0) {
-                work_period_flag = !work_period_flag; //remaining_seconds가 0이 되면 work_period_flag의 bool값이 바뀜
-                remaining_seconds = work_period_flag ? work_duration : rest_duration; //work_period_flag가 참이면 남은 시간은 work_duration이고, 거짓이면 rest_duration임
-                beep();
-                if (!work_period_flag) {
+            if (remaining_seconds <= 0) {//해당 세트에 남은 시간이 없으면
+                if (!work_period_flag && remaining_seconds==0) {//일+쉬는시간이 다 끝나면 set_counter를 증가시킨다.
+                    set_counter++;
+                }else if(work_period_flag&&remaining_seconds==0){ //일이 끝났으면 total 공부시간에 저장한다.
+                    total_elapsed_seconds+=work_duration;
+                }
+                pause_time=0;//공부중->쉬는시간, 쉬는시간->공부중으로 바뀌면 총 일시중지 시간도 초기화 
+                time(&start_time);
+                work_period_flag = !work_period_flag; 
+                //remaining_seconds가 0이 되면 work_period_flag의 bool값이 바뀜. 즉 휴식 모드로 들어감
+                remaining_seconds = work_period_flag ? work_duration : rest_duration; 
+                //work_period_flag가 참이면 남은 시간은 work_duration이고, 거짓이면 rest_duration임
+                current_duration = work_period_flag ? work_duration : rest_duration;
+                
+                //beep();
+                if (!work_period_flag && remaining_seconds==0) {
                     set_counter++;
                 }
             }
 
-            if (work_period_flag) {
-                move(3, 2);
-                printw("Work: Set %d/%d ",set_counter + 1, n_sets);
+            time(&current_time);
+            elapsed_seconds = difftime(current_time, start_time) - pause_time;
+            remaining_seconds = current_duration - elapsed_seconds;
 
-                move(4, 2);
-                //임의로 넣었지만, 실제 시간을 계산해야 함
-                printw("remaining %02d:%02d",5, 20); 
-            } else {
-                move(3, 2);
-                printw("Rest: Set %d/%d ",set_counter + 1, n_sets);
+            minutes = ((int)remaining_seconds % 3600) / 60;
+            seconds = (int)remaining_seconds % 60;
 
-                move(4, 2);
-                //임의로 넣었지만, 실제로는 시간을 계산해야 함
-                printw("remaining %02d:%02d",5, 20); 
+            if (remaining_seconds <= 0 && goal_sets-1 == set_counter) {
+                total_elapsed_seconds+=work_duration;
+                remaining_seconds = 0;
+                in_pomo_flag = false;
+            //     beep();
             }
+
+            move(3, 20);
+            if (work_period_flag) {//일하는 중이면
+                move(3, 2);
+                printw("Work: Set %d/%d ",set_counter + 1, goal_sets);
+                move(4, 2);
+                printw("remaining %02d:%02d",minutes, seconds); 
+            } else {//휴식 중이면
+                move(3, 2);
+                printw("Rest: Set %d/%d ",set_counter + 1, goal_sets);
+                move(4, 2);
+                printw("remaining %02d:%02d",minutes, seconds); 
+            }
+            move(8,2);
+            printw("%d",(int)total_elapsed_seconds);
+            refresh();
         }
         usleep(100000);
     }
