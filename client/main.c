@@ -41,6 +41,7 @@ int main(void){
     //login();
     //creatID();
     //stopwatch_mode();
+    //timer_mode();
 }
 
 void first_page(){
@@ -218,8 +219,9 @@ void mypage(){
     /****************************************/
 
     /***************커맨드 입력***************/
+    // rewind(stdin);
+    nodelay(stdscr, FALSE);
     command = getch();
-
     if(command=='1'){        
         start_study();
     }else if(command=='2'){
@@ -227,7 +229,9 @@ void mypage(){
     }else{
         initscr();
         erase();// 화면 내용을 다 지운 뒤
-        move(2, 2);     addstr("Please enter the correct key.");
+        move(2, 2);
+        printw("%c",command);
+        // addstr("Please enter the correct key.");
         refresh();
         sleep(1);//1초간 오류를 보여주고
         endwin();
@@ -362,6 +366,7 @@ void start_study(){ //Choose mode(스톱워치(stdin(1)), 타이머(stdin(2)), �
     /****************************************/
 
     /****************커맨드 입력****************/
+    getchar();
     command = getch();
     if(command=='1'){        
         timer_mode();
