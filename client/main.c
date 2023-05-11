@@ -37,11 +37,11 @@ void join_other_Group();
 void make_my_Group();
 
 int main(void){
-    first_page();
+    //first_page();
     //login();
     //creatID();
     //stopwatch_mode();
-    //timer_mode();
+    timer_mode();
 }
 
 void first_page(){
@@ -366,7 +366,7 @@ void start_study(){ //Choose mode(스톱워치(stdin(1)), 타이머(stdin(2)), �
     /****************************************/
 
     /****************커맨드 입력****************/
-    getchar();
+    // getchar();
     command = getch();
     if(command=='1'){        
         timer_mode();
@@ -473,9 +473,16 @@ void stopwatch_mode(){ //time up
 void timer_mode(){ //time down
     //TODO: 내부 기능 구현
     int command;
+    bool start_flag=true;
     int goal_hour, goal_minute;
     bool running_flag = false;
     bool in_timer_flag = true;
+    
+    time_t start_time, current_time, pause_start_time, pause_end_time;
+    double pause_time;//휴식 시간의 총합
+    double elapsed_seconds;//현재시간-시작시간-휴식시간
+    double remaining_seconds; //목표시간-elapsed_seconds 해서 화면에 표시
+    int hours, minutes, seconds;
 
     /***************화면 구성***************/
     initscr();
@@ -489,7 +496,6 @@ void timer_mode(){ //time down
     move(4, 9); //커서를 hour 에 맞게 이동
     refresh();
     curs_set(1);//일반 커서를 보여줌
-
 
     nodelay(stdscr, FALSE);
     echo();
@@ -509,55 +515,82 @@ void timer_mode(){ //time down
     refresh();
     endwin();
 
-
     erase();
     curs_set(0);
     move(2, 2);     addstr("Timer mode");
     move(3, 2);     addstr("Remaining time");
 
-    move(3, 20);    addstr(display_time(5,0,0));
+    // move(3, 20);    addstr(display_time(5,0,0));
 
     move(4, 2);     addstr("Start-Please enter '1'");
     move(5, 2);     addstr("Pause-Please enter '2'");
     move(6, 2);     addstr("Finish-Please enter '3'");
     refresh();  
     /****************************************/
-    //TODO: 각 조건문마다 알맞은 시간 처리 필요 
+    //TODO: 각 조건문마다 알맞은 시간 처리 필요
+
+
+    // nodelay(stdscr, TRUE);
+
+    if(start_flag == true){
+        move(3,20);
+        addstr(display_time(goal_hour,goal_minute,0));
+    }
     while (in_timer_flag) {
         command = getch();
-
-        if (command == '1' && !running_flag) {
-            move(3,30);
-            addstr("                     ");
-            move(3,30);
-            addstr("running...");
-            running_flag = true;
-        } else if (command == '2' && running_flag) {
-            move(3,30);
-            addstr("                     ");
-            move(3,30);
-            addstr("pause!");
-            running_flag = false;
-        }else if (command == '3') {
-            in_timer_flag = false;
-            break;
+        if (command != ERR){
+            if (command == '1' && !running_flag){//작동중(시간이 줄어드는 중)
+                running_flag = true;
+                if (start_flag == true){ // 첫 시작일때
+                    time(&start_time);
+                    start_flag = false;
+                }
+                else{ // 휴식 후 재개했을 때
+                    time(&pause_end_time);
+                    pause_time += difftime(pause_end_time, pause_start_time);
+                }
+                move(3, 30);
+                addstr("                     ");
+                move(3, 30);
+                addstr("running...");
+                running_flag = true;
+            }
+            else if (command == '2' && running_flag){//작동 중지
+                time(&pause_start_time);
+                running_flag = false;
+                move(3, 30);
+                addstr("                     ");
+                move(3, 30);
+                addstr("pause!");
+                running_flag = false;
+            }
+            else if (command == '3'){
+                in_timer_flag = false;
+                break;
+            }
         }
+        if (running_flag){//작동중이면 계속 시간을 업데이트 해서 출력
+            time(&current_time);
+            elapsed_seconds = difftime(current_time, start_time) - pause_time;
+            remaining_seconds= (goal_hour*3600)+(goal_minute*60) - elapsed_seconds;
 
-        if (running_flag) {
+            hours = (int)remaining_seconds / 3600;
+            minutes = ((int)remaining_seconds % 3600) / 60;
+            seconds = (int)remaining_seconds % 60;
 
-            // if (remaining_seconds <= 0) {
-            //     remaining_seconds = 0;
-            //     in_timer_flag = false;
+            if (remaining_seconds <= 0) {
+                remaining_seconds = 0;
+                in_timer_flag = false;
             //     beep();
-            // }
+            }
 
-            move(3,20);
-            addstr(display_time(5,0,0));
+            move(3, 20);
+            addstr(display_time(hours, minutes, seconds));
+            refresh();
         }
-         usleep(100000);
-    }
+        usleep(100000);
+    }    
     endwin();
-
     //여기서 남은 시간 저장
 }
 
@@ -721,7 +754,6 @@ void group_list(){
     addstr("Enter the ID of the member you want to call: ");
     move(5, 47);
 
-    i = 0;
     nodelay(stdscr, FALSE);
     echo();
     scanw("%s", member_to_call);
