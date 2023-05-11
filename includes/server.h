@@ -26,7 +26,7 @@ typedef struct s_server
 }t_server;
 
 //init_env.c
-void	init_evn(t_server*);
+void	init_env(t_server*);
 void	clean_fd(t_fd*);
 
 //srv_create.c

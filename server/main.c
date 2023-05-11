@@ -1,6 +1,8 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include "server.h"
 
-void	set_port(t_server& server, int ac, char **av)
+void	set_port(t_server* server, int ac, char **av)
 {
 	if (ac != 2)
 	{
@@ -11,7 +13,7 @@ void	set_port(t_server& server, int ac, char **av)
 }
 
 
-int main(int ac, char *av)
+int main(int ac, char *av[])
 {
 	t_server server;
 
