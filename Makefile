@@ -6,7 +6,7 @@ OBJS = ${SRCS:.c=.o}
 
 NAME = knuTuimer
 
-CFLAGS = -Iincluds/ -g3 -Wall -Werror
+CFLAGS = -Iincludes/. -g3 -Wall -Werror
 LDFLAGS = 
 
 CC = gcc

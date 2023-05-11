@@ -1,5 +1,6 @@
 #include <sys/resource.h>
 #include <stdlib.h>
+
 #include "server.h"
 	
 void	clean_fd(t_fd *fd)
@@ -9,7 +10,7 @@ void	clean_fd(t_fd *fd)
   fd->fct_write = NULL;
 }
 
-void	init_evn(t_server *server)
+void	init_env(t_server *server)
 {
 	int				i;
 	struct rlimit	rlim;
@@ -17,7 +18,7 @@ void	init_evn(t_server *server)
 	//get max fd and set
 	X(-1, getrlimit(RLIMIT_NOFILE, &rlim), "getrlimit"); //NOFILE - number of open files
 	server->maxfd = rlim.rlim_cur;
-	server->fds = (t_fd*)Xv(NULL, malloc(sizeof(*e->fds) * e->maxfd), "malloc");
+	server->fds = (t_fd*)Xv(NULL, malloc(sizeof(*server->fds) * server->maxfd), "malloc");
 	i = 0;
 	while (i < server->maxfd)
 	{
