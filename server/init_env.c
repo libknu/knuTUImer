@@ -1,5 +1,6 @@
 #include <sys/resource.h>
 #include <stdlib.h>
+
 #include "server.h"
 	
 void	clean_fd(t_fd *fd)
@@ -9,7 +10,7 @@ void	clean_fd(t_fd *fd)
   fd->fct_write = NULL;
 }
 
-void	init_evn(t_server *server)
+void	init_env(t_server *server)
 {
 	int				i;
 	struct rlimit	rlim;
