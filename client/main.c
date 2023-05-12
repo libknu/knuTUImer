@@ -37,12 +37,12 @@ void join_other_Group();
 void make_my_Group();
 
 int main(void){
-    //first_page();
+    first_page();
     //login();
     //creatID();
     //stopwatch_mode();
     //timer_mode();
-    pomodoro_mode();
+    // pomodoro_mode();
 }
 
 void first_page(){
@@ -802,25 +802,14 @@ void group_list(){
     refresh();
 
     move(5,2);
-    addstr("Enter the ID of the member you want to call: ");
+    addstr("If you want to call someone, press \"A\"");
     move(5, 47);
 
-    nodelay(stdscr, FALSE);
-    echo();
-    scanw("%s", member_to_call);
-    nodelay(stdscr, TRUE);
-    noecho();
-    refresh();
-    endwin();
+    // command = getchar();
+    // if(!strcmp(command, "A")){
+    //     // beep();
+    // }
 
-    if(is_exist_member(member_to_call)){
-        //TODO: 여기서 통신 필요. 
-        move(6,2);
-        printw("You called %s!",member_to_call);
-    }else{
-        move(6,2);
-        printw("%s doesn't exist.",member_to_call);
-    }
     refresh();
     sleep(1);
     endwin();
