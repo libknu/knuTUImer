@@ -37,12 +37,12 @@ void join_other_Group();
 void make_my_Group();
 
 int main(void){
-    //first_page();
+    first_page();
     //login();
     //creatID();
     //stopwatch_mode();
     //timer_mode();
-    pomodoro_mode();
+    //pomodoro_mode();
 }
 
 void first_page(){
@@ -603,9 +603,6 @@ void pomodoro_mode(){
     bool start_flag=true;
 
     time_t start_time, current_time, pause_start_time, pause_end_time;
-
-    // time_t work_start_time, work_current_time, work_pause_start_time, work_pause_end_time;
-    // time_t rest_start_time, rest_current_time, rest_pause_start_time, rest_pause_end_time;
     
     double pause_time, elapsed_seconds;
 
