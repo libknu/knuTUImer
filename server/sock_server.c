@@ -20,6 +20,7 @@ void	srv_create(t_server *server, int port)
   X(-1, listen(s, BACKLOG), "listen");
   server->fds[s].type = FD_SERV;
   server->fds[s].fct_read = srv_accept;
+  server->fds[s].fct_write = NULL;
 }
 
 void	srv_accept(t_server *server, int s)
