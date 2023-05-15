@@ -18,11 +18,14 @@
 
 # define BACKLOG	128 //sysctl kern.ipc.somaxconn for macos
 						//sysctl net.core.somaxconn for ubutu
+
+typedef struct s_server t_server;
+
 typedef struct	s_fd
 {
   int	type;
-  void	(*fct_read)();
-  void	(*fct_write)();
+  void	(*fct_read)(t_server *, int);
+  void	(*fct_write)(t_server *, int);
   char	buf_read[BUF_SIZE + 1];
   char	buf_write[BUF_SIZE + 1];
 }		t_fd;
