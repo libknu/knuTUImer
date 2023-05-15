@@ -6,6 +6,8 @@
 # define Xv(err,res,str)	(x_void(err,res,str,__FILE__,__LINE__))
 # define X(err,res,str)		(x_int(err,res,str,__FILE__,__LINE__))
 
+# define MAX(a,b)	((a > b) ? a : b)
+
 # define BUF_SIZE	4096
 
 # define FD_FREE	0
