@@ -1,4 +1,5 @@
 #include "list.h"
+#include <stdlib.h>
 
 void	lstadd_back(t_list **lst, t_list *new)
 {
