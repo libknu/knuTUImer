@@ -1,4 +1,5 @@
 knuTuimer
 *.o
 .*.swp
+client/client
 tags
