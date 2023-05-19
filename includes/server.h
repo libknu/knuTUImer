@@ -3,6 +3,8 @@
 
 # include <sys/select.h>
 
+# include "list.h"
+
 # define Xv(err,res,str)	(x_void(err,res,str,__FILE__,__LINE__))
 # define X(err,res,str)		(x_int(err,res,str,__FILE__,__LINE__))
 
@@ -28,12 +30,34 @@ typedef struct	s_fd
   void	(*fct_write)(t_server *, int);
   char	buf_read[BUF_SIZE + 1];
   char	buf_write[BUF_SIZE + 1];
-}		t_fd;
+}t_fd;
+
+typedef struct s_user
+{
+	char		*id;
+	char		*passwd;
+	long long	elapsed;
+}t_user;
+
+typedef struct s_group
+{
+	char		*name;
+	t_list		*op_user;
+	t_list		*joined_users;
+	long long	total_elaped;
+}t_group;
 
 typedef struct s_server
 {
 	//group list
+	t_list* groups;
+	
 	//users logged in
+	t_list* active_users;
+
+	//users signed in
+	t_list* users;
+
 	//server info
 	t_fd	*fds;
 	int		port;

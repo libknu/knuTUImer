@@ -12,15 +12,17 @@ void	set_port(t_server* server, int ac, char **av)
 	server->port = atoi(av[1]);
 }
 
-
 int main(int ac, char *av[])
 {
 	t_server server;
 
+	readfromfile(&server);
 	init_env(&server);
 	set_port(&server, ac, av);
 	srv_create(&server, server.port);
 	loop(&server);
+
+	//TODO: server cleanup procedure
 
 	return (0);
 }
