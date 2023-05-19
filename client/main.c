@@ -747,13 +747,13 @@ void manage_groups(){
     initscr();
     curs_set(0);
     clear();
-    move(2,2);
+    move(2,(max_x-19)/2);
     addstr("Choose an option:\n");
-    move(3,2);
-    printw("1. Group List\n");
-    move(4,2);
+    move(3,(max_x-15)/2);
+    addstr("1. Group List\n");
+    move(4,(max_x-21)/2);
     addstr("2. Join other Group\n");
-    move(5,2);
+    move(5,(max_x-18)/2);
     addstr("3. Make my Group\n");
     refresh();
     /****************************************/
@@ -770,7 +770,7 @@ void manage_groups(){
     else{
         initscr();
         erase();// 화면 내용을 다 지운 뒤
-        move(2, 2);
+        move(2, (max_x-30)/2);
         addstr("Please enter the correct key.");
         refresh();
         sleep(1);//1초간 오류를 보여주고
@@ -790,15 +790,15 @@ void group_list(){
     noecho();
     erase();
 
-    move(2, 2);
+    move(2, (max_x-11)/2);
     addstr("Group List");
-    move(3, 2);
+    move(3, (max_x-35)/2);
     printw("%s's total focusing time %02d:%02d","member1",5, 20); 
-    move(4,2);
+    move(4,(max_x-35)/2);
     printw("%s's total focusing time %02d:%02d","member2",5, 20); 
     refresh();
 
-    move(5,2);
+    move(5,(max_x-39)/2);
     addstr("If you want to call someone, press \"A\"");
     move(5, 47);
 
@@ -817,12 +817,14 @@ bool is_exist_member(char name[]){
     //TODO: 멤버 리스트를 순회하면서, 입력받은 이름의 유저가 있는지 찾는다.
     return true;
 }
+
 void join_other_Group(){
     initscr();
     erase();
     refresh();
     endwin();
 }
+
 void make_my_Group(){
     initscr();
     erase();
