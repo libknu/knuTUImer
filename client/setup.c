@@ -5,7 +5,6 @@
 #include <string.h>
 #include <unistd.h> 
 #include <stdio.h>
-
 #include "client.h"
 
 int	setup(int ac, char **av)//TODO: exception handling

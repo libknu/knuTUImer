@@ -4,30 +4,33 @@
 #include<string.h>
 #include<unistd.h>
 #include <time.h>
-
 #include "client.h"
 
+#define menu_bar_display move(menu_bar, (max_x-76)/2); \
+printw("Home: 'H' | Start studying: 'S' | Manage groups: 'G' | Check attendance 'A'");
+#define menu_bar_message move(menu_bar, (max_x-50)/2); \
+printw("!!Menu bar is not available on the current page!!");
+
 int max_x, max_y;
+int menu_bar;
 
 int main(int argc, char **argv){
 	int sock_fd;
-
 	sock_fd = setup(argc, argv);
     get_terminal_width();
-    //pomodoro_mode();
     first_page();
 }
 
 void get_terminal_width(){
     initscr();
     getmaxyx(stdscr,max_y,max_x);
+    menu_bar=max_y-3;
     endwin();
 }
 
 void first_page(){
     //첫 접속 시 나타나는 창이다. 로그인을 하거나, 회원가입을 한다.
     int command;
-    
     /***************화면 구성***************/
     initscr();
     noecho();
@@ -37,6 +40,7 @@ void first_page(){
     move(2, (max_x/2)-12);    addstr("log in-Please enter '1'");
     move(3, (max_x/2)-12);    addstr("sign up-Please enter '2'");
     curs_set(0);//커서를 안보이게 설정
+
     refresh();
     /****************************************/
 
@@ -75,6 +79,8 @@ void login(){
     initscr();
     noecho();
     erase();// 화면 내용을 다 지움
+
+    
     move(2, (max_x/2)-4); addstr("Log in");
 
     move(4, (max_x/2)-2);     addstr("ID: ");
@@ -87,18 +93,14 @@ void login(){
     nodelay(stdscr, FALSE);
     echo();
     scanw("%s", id);
-    nodelay(stdscr, TRUE);
     noecho();
     refresh();
 
     //비밀번호에 맞게 이동
     move(5, (max_x/2)+4);
     refresh();
-
-    nodelay(stdscr, FALSE);
     echo();
     scanw("%s", password);
-    nodelay(stdscr, TRUE);
     noecho();
     refresh();
     endwin();
@@ -106,13 +108,12 @@ void login(){
     if((strcmp(id,testID)!=0)||(strcmp(password,testPassword)!=0)){//만약 아이디나 패스워드가 일치하지 않으면
         initscr();
         erase();// 화면 내용을 다 지운 뒤
-        move(2, (max_x/2)-17);     
-        // printw("debug: [%s][%s]",id,password);
+        move(2, (max_x/2)-17);
         addstr("The ID or password doesn't match.");
         refresh();
         sleep(1);//1초간 오류를 보여주고
         endwin();
-        login();//로그인 다시 시작
+        first_page();
     }else{//로그인 성공
         mypage();
     }
@@ -134,6 +135,7 @@ void creatID(){
 
     erase();// 화면 내용을 다 지움
 
+
     move(2, (max_x/2)-4);     addstr("Sign up");
     move(4, (max_x/2)-2);     addstr("ID: ");
     move(5, (max_x/2)-5);     addstr("Password: ");
@@ -144,7 +146,6 @@ void creatID(){
     nodelay(stdscr, FALSE);
     echo();
     scanw("%s", id);
-    nodelay(stdscr, TRUE);
     noecho();
     refresh();
     endwin();
@@ -153,11 +154,8 @@ void creatID(){
     //비밀번호에 맞게 이동
     move(5, (max_x/2)+4);
     refresh();
-
-    nodelay(stdscr, FALSE);
     echo();
     scanw("%s", password);
-    nodelay(stdscr, TRUE);
     noecho();
     refresh();
     endwin();
@@ -169,19 +167,26 @@ void creatID(){
         refresh();
         sleep(1);//1초간 오류를 보여주고
         endwin();
-        creatID();//아이디 만들기 다시 시작
-    }else{//로그인 성공
+        first_page();//아이디 만들기 다시 시작
+    }else{
+        initscr();
+        erase();// 화면 내용을 다 지운 뒤
+        move(2, (max_x-42)/2);  addstr("A new ID has been created. Please log in.");
+        refresh();
+        sleep(1);
+        endwin();
         first_page();
     }
-
 }
 
 void mypage(){
+
     int First_access_flag=1;//TODO: 디버깅용으로 1로 설정하였으며, 실제로는 그 날의 첫 접속인지 확인해야 함
     int command;
 
     if(First_access_flag==1){//하루 중 첫 접속이면
         show_calendar();
+        //목표시간
     }
 
     /***************화면 구성***************/
@@ -189,26 +194,31 @@ void mypage(){
     noecho();
     curs_set(0);//커서를 안보이게 설정
     erase();// 화면 내용을 다 지움
+
     move(2, (max_x/2)-11);     addstr("Today's Total Focusing");
-    move(3, (max_x/2)-4);     addstr(display_time(5,0,0));//TODO: 실제로는 총 공부 시간을 파일에서 읽어오는 함수를 새로 만들어야 함. 
-    move(4, (max_x/2)-16);     addstr("Start studying-Please enter '1'");
-    move(5, (max_x/2)-15);     addstr("Manage groups-Please enter '2'");
+    move(4, (max_x/2)-4);     addstr(display_time(5,0,0));//TODO: 실제로는 총 공부 시간을 파일에서 읽어오는 함수를 새로 만들어야 함.
     refresh();  
     /****************************************/
 
+    menu_bar_display
     /***************커맨드 입력***************/
-    // rewind(stdin);
-    nodelay(stdscr, FALSE);
+
     command = getch();
-    if(command=='1'){        
+    if(command=='H'||command=='h'){
+        mypage();
+    }else if(command=='S'||command=='s'){        
         start_study();
-    }else if(command=='2'){
+    }else if(command=='G'||command=='g'){
         manage_groups();
+    }else if(command=='A'||command=='a'){
+        show_calendar();
+        mypage();
     }else{
         initscr();
         erase();// 화면 내용을 다 지운 뒤
         move(2, (max_x/2)-15);
         addstr("Please enter the correct key.");
+        menu_bar_message
         refresh();
         sleep(1);//1초간 오류를 보여주고
         endwin();
@@ -252,7 +262,7 @@ struct calendarInfo get_calender_info(struct tm tm) {
 }
 
 void show_calendar(){ //하루 중 첫 접속때만 first page에서 호출
-    
+
     //TODO: 출석 정보 저장
     
     //내가 생각하고, 임시로 디버깅해본 방법은 다음과 같음
@@ -269,6 +279,7 @@ void show_calendar(){ //하루 중 첫 접속때만 first page에서 호출
     //오늘 날짜를 불러와서 time_t에 저장
     time_t t = time(NULL);
     struct tm tm = *localtime(&t);
+
 
     //오늘의 日을 1로 함
     arr[tm.tm_mday] = 1;
@@ -299,10 +310,13 @@ void show_calendar(){ //하루 중 첫 접속때만 first page에서 호출
             char day_str[3];
             snprintf(day_str, sizeof(day_str), "%2d", current_day); //day를 형식에 맞게 저장
             move(row, ((max_x/2)-12)+(col * 3));
-            if (arr[current_day] == 1) { //arr[日]이 1인 경우는 색상을 반전시켜 출력                
+            if (arr[current_day] == 1) { //arr[日]이 1인 경우는 색상을 반전시켜 출력          
+                //출석o 목표달성x      
                 attron(COLOR_PAIR(1));
                 addstr(day_str);
                 attroff(COLOR_PAIR(1));
+                //목표o
+
             } else {
                 addstr(day_str);
             }
@@ -311,10 +325,16 @@ void show_calendar(){ //하루 중 첫 접속때만 first page에서 호출
         info.start_day = 0;
         row++;
     }
-
+    
+    move(menu_bar, (max_x-36)/2);
+    printw("Press any key to close the calendar");
     refresh();
-    sleep(3); //만든 달력을 3초간 보여줌
+    nodelay(stdscr, FALSE);
+    
+    while (!getch());
+    
     endwin();
+    return;    
 }
 
 char* display_time(int hour, int minute, int second){
@@ -335,6 +355,8 @@ void start_study(){ //Choose mode(스톱워치(stdin(1)), 타이머(stdin(2)), �
     move(3,(max_x-10)/2);      addstr("1. Timer\n");
     move(4,(max_x-14)/2);      addstr("2. Stopwatch\n");
     move(5,(max_x-13)/2);      addstr("3. Pomodoro\n");
+    menu_bar_display    
+
     refresh();
     /****************************************/
 
@@ -347,8 +369,17 @@ void start_study(){ //Choose mode(스톱워치(stdin(1)), 타이머(stdin(2)), �
         stopwatch_mode();
     }else if(command=='3'){
         pomodoro_mode();
-    }
-    else{
+    }else if(command=='H'||command=='h'){
+        mypage();
+    }else if(command=='S'||command=='s'){        
+        start_study();
+    }else if(command=='G'||command=='g'){
+        manage_groups();
+        start_study();
+    }else if(command=='A'||command=='a'){
+        show_calendar();
+        start_study();
+    }else{
         initscr();
         erase();// 화면 내용을 다 지운 뒤
         move(2, (max_x/2)-15);     addstr("Please enter the correct key.");
@@ -374,6 +405,7 @@ void stopwatch_mode(){ //time up
     /***************화면 구성***************/
     initscr();
     noecho();
+
     curs_set(0);//커서를 안보이게 설정
     erase();// 화면 내용을 다 지움
     move(2, (max_x-15)/2);     addstr("Stopwatch mode");
@@ -382,8 +414,8 @@ void stopwatch_mode(){ //time up
     move(6, (max_x-24)/2);     addstr("Finish-Please enter '3'");
     refresh();  
     /****************************************/
-    
-    
+    menu_bar_display
+
     nodelay(stdscr, TRUE);
     
     if(start_flag == true){
@@ -409,22 +441,40 @@ void stopwatch_mode(){ //time up
                 move(3, (max_x/2)+2);
                 addstr("running...");
             }
-            else if (command == '2' && running_flag){ // 휴식 시작
+            else if (command == '2'&& running_flag){ // 휴식 시작
                 time(&pause_start_time);
                 running_flag = false;
                 move(3, (max_x/2)+2);
                 addstr("                     ");
                 move(3, (max_x/2)+2);
                 addstr("pause!");
+            }else if(command=='a'|| command=='A'){
+                if(running_flag){
+                    time(&pause_start_time);
+                }
+                show_calendar();
+                running_flag = false;
+                command='1';
+                nodelay(stdscr, TRUE);
+                //출결 기록을 띄우고 나면 화면을 다시 구성해야 함.
+                erase();
+                move(3,(max_x/2)-9);
+                addstr(display_time(hours, minutes, seconds));
+                move(3, (max_x/2)+2);   addstr("pause!");
+                move(2, (max_x - 15) / 2);      addstr("Stopwatch mode");
+                move(4, (max_x - 23) / 2);      addstr("Start-Please enter '1'");
+                move(5, (max_x - 23) / 2);      addstr("Pause-Please enter '2'");
+                move(6, (max_x - 24) / 2);      addstr("Finish-Please enter '3'");
+                menu_bar_display
             }
-            else if (command == '3'){
+            else if (command == '3'||command=='H'||command=='h'|| command=='S'||command=='s'||command=='G'||command=='g'){
+                running_flag=false;
                 in_stopwatch_flag = false;
-                break;
             }
         }
-        move(3,(max_x/2)-9);
 
         if(running_flag){
+            move(3,(max_x/2)-9);
             time(&current_time);
             elapsed_seconds = difftime(current_time, start_time) - pause_time;
             hours = (int)elapsed_seconds / 3600;
@@ -434,17 +484,24 @@ void stopwatch_mode(){ //time up
             move(7, 2);
             refresh();
         }
-        // printw("r: %lf e: %lf p: %lf",difftime(current_time, start_time),elapsed_seconds, pause_time);
         
         usleep(100000);//0.1초마다 순회
     }
-
+    
+    nodelay(stdscr, FALSE);
+    
     //여기서 elapsed_seconds 를 적당한 값으로(초로 변환?)해서 저장하면 될 듯
+    if(command == '3'||command=='s'||command=='S'){
+        start_study();
+    }else if(command=='H'||command=='h'){
+        mypage();
+    }else if(command=='G'||command=='g'){
+        manage_groups();
+    }
     endwin();
 }
 
 void timer_mode(){ //time down
-    //TODO: 내부 기능 구현
     int command;
     bool start_flag=true;
     int goal_hour, goal_minute;
@@ -462,6 +519,7 @@ void timer_mode(){ //time down
     noecho();
     curs_set(0);//커서를 안보이게 설정
     erase();// 화면 내용을 다 지움
+    menu_bar_message
     move(2, (max_x-11)/2);     addstr("Timer mode");
     move(3, (max_x-18)/2);     addstr("Insert your goal!");
     move(4, (max_x-8)/2);     addstr("Hours: ");
@@ -489,21 +547,17 @@ void timer_mode(){ //time down
     endwin();
 
     erase();
+    menu_bar_display
     curs_set(0);
 
     move(2, (max_x-11)/2);     addstr("Timer mode");
     move(3, ((max_x-15)/2)-10);     addstr("Remaining time");
-
 
     move(4, (max_x-23)/2);     addstr("Start-Please enter '1'");
     move(5, (max_x-23)/2);     addstr("Pause-Please enter '2'");
     move(6, (max_x-24)/2);     addstr("Finish-Please enter '3'");
     refresh();  
     /****************************************/
-    //TODO: 각 조건문마다 알맞은 시간 처리 필요
-
-
-    // nodelay(stdscr, TRUE);
 
     if(start_flag == true){
         move(3,((max_x-15)/2)+6);
@@ -534,10 +588,28 @@ void timer_mode(){ //time down
                 addstr("                     ");
                 move(3, ((max_x-15)/2)+16);
                 addstr("pause!");
+            }else if(command=='a'|| command=='A'){
+                if(running_flag){
+                    time(&pause_start_time);
+                }
+                running_flag=false;
+                show_calendar();
+                nodelay(stdscr, TRUE);
+                //출결 기록을 띄우고 나면 화면을 다시 구성해야 함.
+                erase();
+                move(3,((max_x-15)/2)+6);
+                addstr(display_time(hours, minutes, seconds));
+                move(3, ((max_x-15)/2)+16);    addstr("pause!");
+                move(3, ((max_x-15)/2)-10);     addstr("Remaining time");
+                move(2, (max_x - 11) / 2);      addstr("Timer mode");
+                move(4, (max_x - 23) / 2);      addstr("Start-Please enter '1'");
+                move(5, (max_x - 23) / 2);      addstr("Pause-Please enter '2'");
+                move(6, (max_x - 24) / 2);      addstr("Finish-Please enter '3'");
+                menu_bar_display
             }
-            else if (command == '3'){
+            else if (command == '3'||command=='H'||command=='h'|| command=='S'||command=='s'||command=='G'||command=='g'){
+                running_flag=false;
                 in_timer_flag = false;
-                break;
             }
         }
         if (running_flag){//작동중이면 계속 시간을 업데이트 해서 출력
@@ -560,9 +632,19 @@ void timer_mode(){ //time down
             refresh();
         }
         usleep(100000);
-    }    
+    } 
+    
+    nodelay(stdscr, FALSE);
+       
     endwin();
     //여기서 elapsed_seconds저장
+    if(command == '3'||command=='s'||command=='S'){
+        start_study();
+    }else if(command=='H'||command=='h'){
+        mypage();
+    }else if(command=='G'||command=='g'){
+        manage_groups();
+    }
 }
 
 void pomodoro_mode(){
@@ -599,10 +681,10 @@ void pomodoro_mode(){
     noecho();
     curs_set(0);
     erase();
+    menu_bar_message
     move(2, (max_x-14)/2);     addstr("Pomodoro mode");
     move(3, (max_x-27)/2);     addstr("Enter the number of sets: ");
     curs_set(1);
-
     nodelay(stdscr, FALSE);
     echo();
     scanw("%d", &goal_sets);
@@ -612,6 +694,7 @@ void pomodoro_mode(){
     curs_set(0);
 
     erase();
+    menu_bar_display
     move(2, (max_x-14)/2);     addstr("Pomodoro mode");
     move(5, (max_x-23)/2);     addstr("Start-Please enter '1'");
     move(6, (max_x-23)/2);     addstr("Pause-Please enter '2'");
@@ -651,11 +734,42 @@ void pomodoro_mode(){
                 addstr("                ");
                 move(4, ((max_x-18)/2)+14);
                 addstr("pause!");
-                running_flag = false;
-            } else if (command == '3') {
+            }else if(command=='a'|| command=='A'){
+                if(running_flag){
+                    time(&pause_start_time);
+                }
+                running_flag=false;
+                show_calendar();
+                nodelay(stdscr, TRUE);
+                //출결 기록을 띄우고 나면 화면을 다시 구성해야 함.
+                erase();
+                move(3,((max_x-15)/2)+6);
+                addstr(display_time(hours, minutes, seconds));
+                
+                move(4, ((max_x-18)/2)+14);     addstr("pause!");
+
+                move(2, (max_x-14)/2);     addstr("Pomodoro mode");
+                move(5, (max_x-23)/2);     addstr("Start-Please enter '1'");
+                move(6, (max_x-23)/2);     addstr("Pause-Please enter '2'");
+                move(7, (max_x-24)/2);     addstr("Finish-Please enter '3'");
+                if (work_period_flag) {//일하는 중이면
+                    move(3, (max_x-17)/2);
+                    printw("Work: Set %d/%d ",set_counter + 1, goal_sets);
+                    move(4, ((max_x-18)/2)-4);
+                    printw("remaining %02d:%02d",minutes, seconds); 
+                } else {//휴식 중이면
+                    move(3, (max_x-17)/2);
+                    printw("Rest: Set %d/%d ",set_counter + 1, goal_sets);
+                    move(4, ((max_x-18)/2)-4);
+                    printw("remaining %02d:%02d",minutes, seconds); 
+                }
+                menu_bar_display
+            }
+            else if (command == '3'||command=='H'||command=='h'|| command=='S'||command=='s'||command=='G'||command=='g'){
                 if(work_period_flag){//공부를 하던 중 3이 입력되면 지금까지의 공부 시간을 기록
                     total_elapsed_seconds+=elapsed_seconds;
                 }
+                running_flag=false;
                 in_pomo_flag = false;
             }
         }
@@ -711,6 +825,19 @@ void pomodoro_mode(){
         }
         usleep(100000);
     }
+
+    
+    nodelay(stdscr, FALSE);
+    
+    //여기서 total_elapsed_seconds 저장
+    if(command == '3'||command=='s'||command=='S'){
+        start_study();
+    }else if(command=='H'||command=='h'){
+        mypage();
+    }else if(command=='G'||command=='g'){
+        manage_groups();
+    }
+
     endwin();
 }
 
@@ -721,6 +848,7 @@ void manage_groups(){
     initscr();
     curs_set(0);
     clear();
+    menu_bar_display
     move(2,(max_x-19)/2);
     addstr("Choose an option:\n");
     move(3,(max_x-15)/2);
@@ -740,6 +868,15 @@ void manage_groups(){
         join_other_Group();
     }else if(command=='3'){
         make_my_Group();
+    }else if(command=='H'||command=='h'){
+        mypage();
+    }else if(command=='S'||command=='s'){        
+        start_study();
+    }else if(command=='G'||command=='g'){
+        manage_groups();
+    }else if(command=='A'||command=='a'){
+        show_calendar();
+        manage_groups();
     }
     else{
         initscr();
@@ -754,15 +891,15 @@ void manage_groups(){
     /****************************************/
 }
 void group_list(){
+    //TODO: group 은 구현이 끝나면 메뉴바를 만들겠음
     //여기는 나중에 반복문으로 유저 목록을 출력해야 하는데, 현재상태로는 어려워서 단순출력함.
     //구조체 멤버가 정해지면 반복문 형태로 수정
     int command;
-    int i;
-    char ch;
     char member_to_call[20];
     initscr();
     noecho();
     erase();
+    // menu_bar_display
 
     move(2, (max_x-11)/2);
     addstr("Group List");
