@@ -13,6 +13,8 @@ printw("!!Menu bar is not available on the current page!!");
 
 int max_x, max_y;
 int menu_bar;
+int goal = 0;
+
 
 int main(int argc, char **argv){
 	int sock_fd;
@@ -79,7 +81,6 @@ void login(){
     initscr();
     noecho();
     erase();// 화면 내용을 다 지움
-
     
     move(2, (max_x/2)-4); addstr("Log in");
 
@@ -135,7 +136,6 @@ void creatID(){
 
     erase();// 화면 내용을 다 지움
 
-
     move(2, (max_x/2)-4);     addstr("Sign up");
     move(4, (max_x/2)-2);     addstr("ID: ");
     move(5, (max_x/2)-5);     addstr("Password: ");
@@ -179,14 +179,31 @@ void creatID(){
     }
 }
 
-void mypage(){
+void set_goal(){
+    initscr();
+    noecho();
+    curs_set(0);
+    erase();
+    
+    move(3, (max_x/2)-18);     addstr("Please Enter Today's Goal(hours)");
+    refresh();
 
+    goal = getch();
+
+    move(5, (max_x/2)-18);     printw("Today's goal is %c hours!", goal);
+    refresh();
+    sleep(1);
+
+}
+
+void mypage(){
     int First_access_flag=1;//TODO: 디버깅용으로 1로 설정하였으며, 실제로는 그 날의 첫 접속인지 확인해야 함
     int command;
 
     if(First_access_flag==1){//하루 중 첫 접속이면
         show_calendar();
-        //목표시간
+        set_goal();
+
     }
 
     /***************화면 구성***************/
@@ -195,8 +212,10 @@ void mypage(){
     curs_set(0);//커서를 안보이게 설정
     erase();// 화면 내용을 다 지움
 
-    move(2, (max_x/2)-11);     addstr("Today's Total Focusing");
-    move(4, (max_x/2)-4);     addstr(display_time(5,0,0));//TODO: 실제로는 총 공부 시간을 파일에서 읽어오는 함수를 새로 만들어야 함.
+    move(1, (max_x/2)-13);     addstr("Today's Focusing Goal(hours)");
+    move(2, (max_x/2)-4);     addstr(display_time(goal - 48, 0, 0));
+    move(4, (max_x/2)-11);     addstr("Today's Total Focusing");
+    move(5, (max_x/2)-4);     addstr(display_time(5,0,0));//TODO: 실제로는 총 공부 시간을 파일에서 읽어오는 함수를 새로 만들어야 함.    
     refresh();  
     /****************************************/
 
@@ -325,6 +344,8 @@ void show_calendar(){ //하루 중 첫 접속때만 first page에서 호출
         info.start_day = 0;
         row++;
     }
+
+
     
     move(menu_bar, (max_x-36)/2);
     printw("Press any key to close the calendar");
