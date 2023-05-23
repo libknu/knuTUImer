@@ -9,10 +9,17 @@ struct calendarInfo
     int start_day;//이번 달은 무슨 요일부터?
 };
 
-const static char MON[12][4] = {
+static const char MON[12][4] = {
     "Jan", "Feb", "Mar", "Apr", "May", "Jun",
     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
 };
+
+#define menu_bar_display move(menu_bar, (max_x-76)/2); \
+printw("Home: 'H' | Start studying: 'S' | Manage groups: 'G' | Check attendance 'A'");
+#define menu_bar_message move(menu_bar, (max_x-50)/2); \
+printw("!!Menu bar is not available on the current page!!");
+
+
 
 //main.c
 void first_page();//첫 시작 페이지. 로그인 또는 회원가입
@@ -27,11 +34,11 @@ void stopwatch_mode();
 void timer_mode();
 void pomodoro_mode();
 void manage_groups(); //Group List(stdin(1)) Join other Group(stdin(2)) Make my Group(stdin(3))
-void group_list();
-bool is_exist_member(char[]);
+void my_group_list();
+void group_member_list();
 void join_other_Group();
 void make_my_Group();
-void get_terminal_width();//화면 중앙에 오브젝트를 배치하기 위해 터미널의 가로 길이를 구하는 함수이다
+void get_terminal_size();//화면 중앙에 오브젝트를 배치하기 위해 터미널의 가로세로 길이를 구하는 함수이다
 
 
 //setup.c
