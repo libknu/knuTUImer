@@ -9,6 +9,25 @@ struct calendarInfo
     int start_day;//이번 달은 무슨 요일부터?
 };
 
+//TODO: 실제 구조체에는 더 많은 정보 필요(출석 정보 등...)
+typedef struct test_member
+{   
+    char user_name[20];//유저 이름
+    double study_time; //유저의 총 공부 시간
+    char* joined_groups;//가입된 그룹
+}tm;
+
+extern tm dummy_members[20];
+
+typedef struct test_group
+{   
+    char group_name[20];//그룹명
+    double study_time; //그룹원의 총 공부 시간
+    char *group_members; //그룹원 리스트
+}tg;
+
+extern tg dummy_groups[10];
+
 static const char MON[12][4] = {
     "Jan", "Feb", "Mar", "Apr", "May", "Jun",
     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
@@ -20,26 +39,39 @@ printw("Home: 'H' | Start studying: 'S' | Manage groups: 'G' | Check attendance 
 printw("!!Menu bar is not available on the current page!!");
 
 
+//TODO: 실제 구현 및 제출 시 삭제
+void make_dummy_data();
 
-//main.c
-void first_page();//첫 시작 페이지. 로그인 또는 회원가입
-void login();//로그인
-void creatID();//회원가입
-void mypage();//show_calendar(하루 중 1회만. 4초간 보여줌.)/Today’s Total Focusing(보여만 줌)/ 공부 시작하기(stdin(1)) / 그룹 관리하기(stdin(2))-goole docs에서 바뀐 부분
-struct calendarInfo get_calender_info(struct tm);
-void show_calendar(); //하루 중 첫 접속때만 first page에서 호출
+//common.c
 char* display_time(int hour, int minute, int second);
-void start_study(); //Choose mode(스톱워치(stdin(1)), 타이머(stdin(2)), 뽀모도로(stdin(3)))
+void get_terminal_size();
+
+//calendar.c
+struct calendarInfo get_calender_info(struct tm);
+void show_calendar();
+
+//first_page.c
+void first_page();
+
+//auth.c
+void login();
+void creatID();
+
+//mypage.c
+void mypage();
+
+//timer_utils.c
+void start_study();
 void stopwatch_mode();
 void timer_mode();
 void pomodoro_mode();
-void manage_groups(); //Group List(stdin(1)) Join other Group(stdin(2)) Make my Group(stdin(3))
+
+//group_utils.c
+void manage_groups();
 void my_group_list();
 void group_member_list();
 void join_other_Group();
 void make_my_Group();
-void get_terminal_size();//화면 중앙에 오브젝트를 배치하기 위해 터미널의 가로세로 길이를 구하는 함수이다
-
 
 //setup.c
 int setup(int, char **);
