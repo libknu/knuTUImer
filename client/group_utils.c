@@ -11,7 +11,7 @@ extern tm dummy_members[20];
 void manage_groups(){
     int command;
     /***************화면 구성***************/
-    initscr();
+    // initscr();
     curs_set(0);
     clear();
     menu_bar_display
@@ -23,7 +23,6 @@ void manage_groups(){
     addstr("2. Join other Group\n");
     move(5,(max_x-18)/2);
     addstr("3. Make my Group\n");
-    refresh();
     /****************************************/
 
     /****************커맨드 입력****************/
@@ -45,13 +44,11 @@ void manage_groups(){
         manage_groups();
     }
     else{
-        initscr();
         erase();// 화면 내용을 다 지운 뒤
         move(2, (max_x-30)/2);
         addstr("Please enter the correct key.");
         refresh();
         sleep(1);//1초간 오류를 보여주고
-        endwin();
         manage_groups();
     }
     /****************************************/
@@ -66,12 +63,12 @@ void my_group_list(){
     int total_group_num; //클라이언트가 가입한 그룹의 개수
     int overflow_num; //화면에 표시되지 않고 스크롤링해야 보이는 그룹의 개수
     int scroll_num=0; //아래 방향키로 스크롤한 횟수
-    initscr();
+    // initscr();
     noecho();
     erase();
     // raw(); 
-    keypad(stdscr, TRUE);
 
+    keypad(stdscr, TRUE);
     menu_bar_display
     move(2, (max_x-14)/2);
     printw("My Group List");
@@ -79,9 +76,6 @@ void my_group_list(){
     list_maximum_num=max_y-7;
     total_group_num=sizeof(dummy_groups)/sizeof(dummy_groups[1]);
     overflow_num=total_group_num-list_maximum_num;
-
-    move(1,1);
-    printw("debug:%d", list_maximum_num);
 
     //TODO: 실제로는 array형태의 더미 데이터가 아니라 링크드 리스트 형태의 데이터를 서버로부터 받아 옴
     //TODO: 링크드리스트가 아니라 array형태로 받아오는거라면, 그대로 사용할 수 있음
@@ -119,8 +113,8 @@ void my_group_list(){
             echo();
             scanw("%s",enter_group_name);
             noecho();
-
             curs_set(0);
+
             //TODO: 내가 속한 그룹 전체를 순회하며 내가 입력한 그룹이 존재하는지 확인
             //TODO: 혹은, 서버에 클라이언트의 ID와 입력한 그룹 명을 전송하면, 서버가 해당 클라이언트가 가입한 그룹 중 입력된 그룹이 있는지 확인해줌
 
@@ -131,12 +125,8 @@ void my_group_list(){
 
         }else if(command==KEY_UP){//위 방향키
             if(scroll_num!=0) scroll_num--;
-            move(2,1);
-            printw("%d",scroll_num);
         }else if(command==KEY_DOWN){//아래 방향키
-            if(scroll_num!=total_group_num-list_maximum_num) scroll_num++;
-            move(2,1);
-            printw("%d",scroll_num);
+            if(scroll_num<total_group_num-list_maximum_num) scroll_num++;
         }else if(command=='H'||command=='h'){
             mypage();
         }else if(command=='S'||command=='s'){        
@@ -148,13 +138,11 @@ void my_group_list(){
             my_group_list();
         }
         else{
-            initscr();
             erase();// 화면 내용을 다 지운 뒤
             move(2, (max_x-30)/2);
-            printw("Please enter the correct key.[%d][%c]",command,command);
+            printw("Please enter the correct key.");
             refresh();
             sleep(1);//1초간 오류를 보여주고
-            endwin();
             my_group_list();
         }
 
@@ -182,7 +170,6 @@ void group_member_list(){
     total_member_num=sizeof(dummy_members)/sizeof(dummy_members[1]);
     overflow_num=total_member_num-list_maximum_num;
 
-    initscr();
     noecho();
     erase();
     menu_bar_display
@@ -192,9 +179,6 @@ void group_member_list(){
     //TODO: 링크드리스트가 아니라 array형태로 받아오는거라면, 그대로 사용할 수 있음
     move(2, (max_x-11)/2);
     printw("Member List");
-
-    move(1,1);
-    printw("debug:%d", list_maximum_num);
 
     //TODO: 실제로는 array형태의 더미 데이터가 아니라 링크드 리스트 형태의 데이터를 서버로부터 받아 옴
 
@@ -209,7 +193,6 @@ void group_member_list(){
     move(menu_bar-1,(max_x-31)/2);
     addstr("If you want to chat, press \"C\"");
     move(5, 47);
-
 
     while (1)
     {
@@ -232,8 +215,8 @@ void group_member_list(){
             echo();
             scanw("%s",member_to_call);
             noecho();
-
             curs_set(0);
+
             //TODO: 서버에 현재 클라이언트의 아이디와 현재 그룹명, 깨울 멤버 아이디를 전송
             //현재 그룹에 깨울 멤버가 존재하면 그 멤버에게 깨움 전송...
             //존재하지 않으면 group_member_list() 재귀호출
@@ -246,12 +229,8 @@ void group_member_list(){
             group_member_list();
         }else if(command==KEY_UP){//위 방향키
             if(scroll_num!=0) scroll_num--;
-            move(2,1);
-            printw("%d",scroll_num);
         }else if(command==KEY_DOWN){//아래 방향키
-            if(scroll_num!=total_member_num-list_maximum_num) scroll_num++;
-            move(2,1);
-            printw("%d",scroll_num);
+            if(scroll_num<total_member_num-list_maximum_num) scroll_num++;
         }
         else if(command=='H'||command=='h'){
             mypage();
@@ -264,13 +243,11 @@ void group_member_list(){
             group_member_list();
         }
         else{
-            initscr();
             erase();// 화면 내용을 다 지운 뒤
             move(2, (max_x-30)/2);
             addstr("Please enter the correct key.");
             refresh();
             sleep(1);//1초간 오류를 보여주고
-            endwin();
             group_member_list();
         }
 
@@ -281,7 +258,6 @@ void group_member_list(){
             printw("%s",dummy_members[i].user_name);
         }
         refresh();
-
     }
 }
 
@@ -290,10 +266,8 @@ void join_other_Group(){
     //TODO: 서버에 현재 client의 ID와 가입하려는 그룹의 이름을 전송하면, join성공 여부 반환. 실패라면, 존재하지 않는 그룹인 경우와 이미 가입된 그룹인 경우로 나누어 리턴값 받기
 
     char group_for_join[20];
-    
-    initscr();
-    erase();
 
+    erase();
     move(2, (max_x-14)/2);
     printw("Joining Group");
     move(menu_bar,(max_x-76)/2); 
@@ -320,9 +294,6 @@ void join_other_Group(){
     }else{
         manage_groups();
     }
-
-    refresh();
-    endwin();
 }
 
 void make_my_Group(){
@@ -331,9 +302,8 @@ void make_my_Group(){
 
     char group_for_make[20];
     
-    initscr();
-    erase();
 
+    erase();
     move(2, (max_x-14)/2);
     printw("Making Group");
     move(menu_bar,(max_x-76)/2); 
@@ -358,7 +328,4 @@ void make_my_Group(){
     }else{
         manage_groups();
     }
-
-    refresh();
-    endwin();
 }

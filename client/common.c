@@ -14,5 +14,4 @@ void get_terminal_size(){
     initscr();
     getmaxyx(stdscr,max_y,max_x);
     menu_bar=max_y-3;
-    endwin();
 }

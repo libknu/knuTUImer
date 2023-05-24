@@ -5,11 +5,9 @@
 extern int max_x, max_y, menu_bar;
 
 void start_study(){ //Choose mode(스톱워치(stdin(1)), 타이머(stdin(2)), 뽀모도로(stdin(3)))
-
     int command;
     
     /***************화면 구성***************/
-    initscr();
     curs_set(0);
     clear();
     move(2,(max_x-19)/2);      addstr("Choose an option:\n");
@@ -17,12 +15,9 @@ void start_study(){ //Choose mode(스톱워치(stdin(1)), 타이머(stdin(2)), �
     move(4,(max_x-14)/2);      addstr("2. Stopwatch\n");
     move(5,(max_x-13)/2);      addstr("3. Pomodoro\n");
     menu_bar_display    
-
-    refresh();
     /****************************************/
 
     /****************커맨드 입력****************/
-    // getchar();
     command = getch();
     if(command=='1'){        
         timer_mode();
@@ -41,19 +36,18 @@ void start_study(){ //Choose mode(스톱워치(stdin(1)), 타이머(stdin(2)), �
         show_calendar();
         start_study();
     }else{
-        initscr();
         erase();// 화면 내용을 다 지운 뒤
         move(2, (max_x/2)-15);     addstr("Please enter the correct key.");
         refresh();
         sleep(1);//1초간 오류를 보여주고
-        endwin();
         start_study();
     }
     /****************************************/
 }
 
 void stopwatch_mode(){ //time up
-    
+
+    //TODO: 유저의 아이디와 유저가 추가로 한 공부시간을 서버로 전송하면, 서버는 유저의 기존 공부시간에 추가 공부시간을 더해야 함 
     int command;
     bool running_flag = false;
     bool in_stopwatch_flag = true;
@@ -64,7 +58,6 @@ void stopwatch_mode(){ //time up
     int hours, minutes, seconds;
 
     /***************화면 구성***************/
-    initscr();
     noecho();
 
     curs_set(0);//커서를 안보이게 설정
@@ -73,7 +66,6 @@ void stopwatch_mode(){ //time up
     move(4, (max_x-23)/2);     addstr("Start-Please enter '1'");
     move(5, (max_x-23)/2);     addstr("Pause-Please enter '2'");
     move(6, (max_x-24)/2);     addstr("Finish-Please enter '3'");
-    refresh();  
     /****************************************/
     menu_bar_display
 
@@ -151,7 +143,7 @@ void stopwatch_mode(){ //time up
     
     nodelay(stdscr, FALSE);
     
-    //여기서 elapsed_seconds 를 적당한 값으로(초로 변환?)해서 저장하면 될 듯
+    //TODO: 여기서 elapsed_seconds 유저 아이디와 함께 서버로 전송
     if(command == '3'||command=='s'||command=='S'){
         start_study();
     }else if(command=='H'||command=='h'){
@@ -163,6 +155,7 @@ void stopwatch_mode(){ //time up
 }
 
 void timer_mode(){ //time down
+    //TODO: 유저의 아이디와 유저가 추가로 한 공부시간을 서버로 전송하면, 서버는 유저의 기존 공부시간에 추가 공부시간을 더해야 함 
     int command;
     bool start_flag=true;
     int goal_hour, goal_minute;
@@ -176,7 +169,6 @@ void timer_mode(){ //time down
     int hours, minutes, seconds;
 
     /***************화면 구성***************/
-    initscr();
     noecho();
     curs_set(0);//커서를 안보이게 설정
     erase();// 화면 내용을 다 지움
@@ -186,7 +178,6 @@ void timer_mode(){ //time down
     move(4, (max_x-8)/2);     addstr("Hours: ");
     move(5, (max_x-10)/2);     addstr("Minutes: ");
     move(4, ((max_x-8)/2)+6); //커서를 hour 에 맞게 이동
-    refresh();
     curs_set(1);//일반 커서를 보여줌
 
     nodelay(stdscr, FALSE);
@@ -194,18 +185,14 @@ void timer_mode(){ //time down
     scanw("%d", &goal_hour);
     nodelay(stdscr, TRUE);
     noecho();
-    refresh();
 
     //minutes에 맞게 이동
     move(5, ((max_x-8)/2)+7);
-    refresh();
     nodelay(stdscr, FALSE);
     echo();
     scanw("%d", &goal_minute);
     nodelay(stdscr, TRUE);
     noecho();
-    refresh();
-    endwin();
 
     erase();
     menu_bar_display
@@ -296,9 +283,8 @@ void timer_mode(){ //time down
     } 
     
     nodelay(stdscr, FALSE);
-       
-    endwin();
-    //여기서 elapsed_seconds저장
+    
+    //TODO: 여기서 elapsed_seconds 유저 아이디와 함께 서버로 전송
     if(command == '3'||command=='s'||command=='S'){
         start_study();
     }else if(command=='H'||command=='h'){
@@ -309,6 +295,7 @@ void timer_mode(){ //time down
 }
 
 void pomodoro_mode(){
+    //TODO: 유저의 아이디와 유저가 추가로 한 공부시간을 서버로 전송하면, 서버는 유저의 기존 공부시간에 추가 공부시간을 더해야 함     
     int goal_sets;
     int command;
 
@@ -338,7 +325,6 @@ void pomodoro_mode(){
     int current_duration = work_duration;
     bool work_period_flag = true; //25분 사이클 안에 있는지 표시하는 플래그
 
-    initscr();
     noecho();
     curs_set(0);
     erase();
@@ -360,8 +346,6 @@ void pomodoro_mode(){
     move(5, (max_x-23)/2);     addstr("Start-Please enter '1'");
     move(6, (max_x-23)/2);     addstr("Pause-Please enter '2'");
     move(7, (max_x-24)/2);     addstr("Finish-Please enter '3'");
-    refresh();
-
 
     if(start_flag == true){ //처음 1을 입력하기 전에 표시할 내용
         move(3, (max_x-17)/2);
@@ -490,7 +474,7 @@ void pomodoro_mode(){
     
     nodelay(stdscr, FALSE);
     
-    //여기서 total_elapsed_seconds 저장
+    //TODO: 여기서 total_elapsed_seconds 유저 아이디와 함께 서버로 전송
     if(command == '3'||command=='s'||command=='S'){
         start_study();
     }else if(command=='H'||command=='h'){
@@ -498,6 +482,4 @@ void pomodoro_mode(){
     }else if(command=='G'||command=='g'){
         manage_groups();
     }
-
-    endwin();
 }

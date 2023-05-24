@@ -37,15 +37,11 @@ struct calendarInfo get_calender_info(struct tm tm) {
     return info;
 }
 
-void show_calendar(){ //하루 중 첫 접속때만 first page에서 호출
+void show_calendar(){ 
 
-    //TODO: 출석 정보 저장
+    //TODO: 서버에 유저의 아이디를 전송하여 출석 정보 저장및 현재 client의 출석기록 받아옴
+    //TODO: 날짜 정보 처리 부분은 서버로 옮기는게 좋은지 논의
     
-    //내가 생각하고, 임시로 디버깅해본 방법은 다음과 같음
-    //날짜(日)를 저장하는 arr 배열을 만든다.(또, 실제로는 파일에 입력해야 함. 나는 日만 고려했지만, 月도 고려해야 함) 
-    //오늘 날짜(日)를 불러와서, 해당 arr(日)=1; 한다.
-    //arr을 순회하면서 arr[日]==1인 날만 날짜를 반전시켜 보여준다.
-
     int arr[32] = {0,};
     int attended_day;
     int current_day=1;
@@ -56,11 +52,9 @@ void show_calendar(){ //하루 중 첫 접속때만 first page에서 호출
     time_t t = time(NULL);
     struct tm tm = *localtime(&t);
 
-
     //오늘의 日을 1로 함
+    //TODO: 이 정보 서버와 통신하여 입/출력해야 함
     arr[tm.tm_mday] = 1;
-
-    initscr();
     clear();
     curs_set(0); //커서를 안보이게 함
 
@@ -76,10 +70,12 @@ void show_calendar(){ //하루 중 첫 접속때만 first page에서 호출
     move(1,(max_x/2)-12);
     addstr("Su Mo Tu We Th Fr Sa");
 
+    //TODO: 오늘 날짜를 서버에 전송하면 서버가 캘린더 정보 구조체를 보내주도록 하는 방안 논의(생각해보니 클라이언트단의 역할이 아닌 것 같기도 해서...)
     struct calendarInfo info=get_calender_info(tm);
 
 
     /*****************달력 그리기*******************/
+
     while (current_day <= info.number_of_days_in_month) {//current_day(지금 출력하고 있는 day)가 이번 달의 마지막 날일때 까지
         for (col = info.start_day ;  col < 7 && current_day <= info.number_of_days_in_month; col++) { 
             //시작 요일부터 6(일요일)까지 출력 후 줄바꿈하고 그 뒤로는 한 행에 7일씩 출력. 
@@ -106,9 +102,6 @@ void show_calendar(){ //하루 중 첫 접속때만 first page에서 호출
     printw("Press any key to close the calendar");
     refresh();
     nodelay(stdscr, FALSE);
-    
     while (!getch());
-    
-    endwin();
     return;    
 }
