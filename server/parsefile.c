@@ -1,37 +1,40 @@
 #include <dirent.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <time.h>
 #include <string.h>
 #include "server.h"
 #include "utils.h"
 
-# define GROUPPATH "../db"
-# define USERPATH "../db/users"
+# define GROUPPATH "./db/groups"
+# define USERPATH "./db/users/"
 
 # define MAXIDLEN 255
 # define MAXPSWDLEN 10
 
 static void parseuserfile(t_server* server, char *file)
 {
-	char *buffer = (char *)malloc(sizeof(char) * BUFSIZ);
+	size_t bufsiz = BUFSIZ;
+	char *buffer = (char *)malloc(sizeof(char) * bufsiz);
 
 	t_user *newuser = (t_user *)malloc(sizeof(t_user));
 	newuser->id = (char *)malloc(sizeof(char) * MAXIDLEN);
 	newuser->passwd= (char *)malloc(sizeof(char) * MAXPSWDLEN);
 
-	t_list *newnode = (t_list *)malloc(sizeof(t_list));
-	FILE* userfile = fopen(file, "r");
+	char *fullpath = strjoin(USERPATH, file);
+	FILE* userfile = (FILE *)Xv(NULL, fopen(fullpath, "r"), "fopen");
+	free(fullpath);
 
-	ssize_t linesize = getdelim(&buffer, 0, ' ',  userfile);
+	ssize_t linesize = X(-1, getdelim(&buffer, &bufsiz, ' ',  userfile), "getdelim");
+	buffer[linesize - 1] = '\0';
 	strncpy(newuser->id, buffer, linesize);
-	linesize = getdelim(&buffer, 0, ' ',  userfile);
+	linesize = X(-1, getdelim(&buffer, &bufsiz, '\n', userfile), "getdelim");
+	buffer[linesize - 1] = '\0';
 	strncpy(newuser->passwd, buffer, linesize);
 	newuser->elapsed  = getfocustime(file, gettodaydate());
-	newnode->content = newuser;
-	newnode->next = NULL;
+	t_list *newnode = lstnew(newuser);
 	lstadd_back(&(server->users), newnode);
 	free(buffer);
+	fclose(userfile);
 }
 
 static void getusersinfo(t_server *server)

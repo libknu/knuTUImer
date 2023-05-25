@@ -44,7 +44,7 @@ typedef struct s_group
 	char		*name;
 	t_list		*op_user;
 	t_list		*joined_users;
-	long long	total_elaped;
+	long long	total_elapsed;
 }t_group;
 
 typedef struct s_server
