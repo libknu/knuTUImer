@@ -3,7 +3,6 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "server.h"
 #include "utils.h"
 
 char *gettodaydate()
@@ -23,16 +22,15 @@ long long getfocustime(char *user, char *date)
 	long long elapsed;
 	char *buffer = (char *)malloc(sizeof(char) * BUFSIZ);
 	char *command;
-	char *userfilepath = strjoin(USERPATH, user);
 
 	char *cmd1 = "cat ";
 	char *cmd2 = " | grep ";
 	char *cmd3 = " | awk '{print $2}'";
-	size_t size = strlen(cmd1) + strlen(cmd2) + strlen(cmd3) + strlen(userfilepath) + strlen(date) + 2;
+	size_t size = strlen(cmd1) + strlen(cmd2) + strlen(cmd3) + strlen(user) + strlen(date) + 2;
 
 	command = (char *)malloc(sizeof(char) * size);
 	strcpy(command, cmd1);
-	strcat(command, userfilepath);
+	strcat(command, user);
 	strcat(command, cmd2);
 	strcat(command, date);
 	strcat(command, cmd3);
@@ -43,7 +41,6 @@ long long getfocustime(char *user, char *date)
 	int status = pclose(fp);
 	elapsed = WIFEXITED(status) ? 0 : atoi(buffer);
 	free(command);
-	free(userfilepath);
 	free(buffer);
 	return elapsed;
 }
