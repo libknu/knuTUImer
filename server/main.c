@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "server.h"
 
-void	set_port(t_server* server, int ac, char **av)
+static void	set_port(t_server* server, int ac, char **av)
 {
 	if (ac != 2)
 	{
