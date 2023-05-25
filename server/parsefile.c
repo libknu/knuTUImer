@@ -5,9 +5,6 @@
 #include "server.h"
 #include "utils.h"
 
-# define GROUPPATH "./db/groups"
-# define USERPATH "./db/users/"
-
 # define MAXIDLEN 255
 # define MAXPSWDLEN 10
 

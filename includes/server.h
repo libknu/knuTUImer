@@ -20,6 +20,9 @@
 
 # define BACKLOG	128 //sysctl kern.ipc.somaxconn for macos
 						//sysctl net.core.somaxconn for ubutu
+						//
+# define GROUPPATH "./db/groups"
+# define USERPATH "./db/users/"
 
 typedef struct s_server t_server;
 
