@@ -5,9 +5,6 @@
 #include "server.h"
 #include "utils.h"
 
-# define GROUPPATH "./db/groups"
-# define USERPATH "./db/users/"
-
 # define MAXIDLEN 255
 # define MAXPSWDLEN 10
 
@@ -30,7 +27,7 @@ static void parseuserfile(t_server* server, char *file)
 	linesize = X(-1, getdelim(&buffer, &bufsiz, '\n', userfile), "getdelim");
 	buffer[linesize - 1] = '\0';
 	strncpy(newuser->passwd, buffer, linesize);
-	newuser->elapsed  = getfocustime(file, gettodaydate());
+	newuser->elapsed = getfocustime(file, gettodaydate());
 	t_list *newnode = lstnew(newuser);
 	lstadd_back(&(server->users), newnode);
 	free(buffer);
@@ -56,24 +53,29 @@ static void getusersinfo(t_server *server)
 static void getgroupsinfo(t_server *server)
 {
 	int		op_flag;
-	ssize_t	linesize;
+	size_t	bufsiz = BUFSIZ;
+	ssize_t linesize;
 	char	*token;
-	char	*buffer = (char *)malloc(sizeof(char) * BUFSIZ);
+	char	*buffer = (char *)malloc(sizeof(char) * bufsiz);
 	FILE*	fp = fopen(GROUPPATH, "r");
 
 	while (1)
 	{
-		linesize = getdelim(&buffer, 0, '\n',  fp);
-		if (linesize == -1)
+		linesize = getdelim(&buffer, &bufsiz, '\n',  fp);
+		if (linesize <= 0)
 			break;
+		buffer[linesize - 1] = '\0';
 		t_group *newgroup = (t_group *)malloc(sizeof(t_group));
 		token = strtok(buffer, ",");
-		newgroup->name = (char *)malloc(sizeof(char) * strlen(token));
+		newgroup->name = (char *)malloc(sizeof(char) * strlen(token) + 1);
 		strcpy(newgroup->name, token);
 		token = strtok(NULL, ",");
 		newgroup->total_elapsed = atoi(token);
+		newgroup->op_user = NULL;
+		newgroup->joined_users = NULL;
 
-		linesize = getdelim(&buffer, 0, '\n',  fp);
+		linesize = X(-1, getdelim(&buffer, &bufsiz, '\n',  fp), "getdelim");
+		buffer[linesize - 1] = '\0';
 		token = strtok(buffer, ",");
 		op_flag = 0;
 		while (token != NULL)
@@ -85,11 +87,11 @@ static void getgroupsinfo(t_server *server)
 				{
 					if (op_flag == 0)
 					{
-						lstadd_back(&(newgroup->op_user), lstnew(node->content));
+						lstadd_back(&(newgroup->op_user), node);
 						op_flag = 1;
 					}
 					else
-						lstadd_back(&(newgroup->joined_users), lstnew(node->content));
+						lstadd_back(&(newgroup->joined_users), node);
 					break;
 				}
 				node = node->next;
