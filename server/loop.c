@@ -2,7 +2,7 @@
 #include <string.h>
 #include "server.h"
 
-void	init_fd(t_server *server)
+static void	init_fd(t_server *server)
 {
 	int	i;
 
