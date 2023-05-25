@@ -3,3 +3,5 @@ knuTuimer
 .*.swp
 client/client
 tags
+*.out.dSYM/
+*.out
