@@ -5,9 +5,6 @@
 #include "server.h"
 #include "utils.h"
 
-# define GROUPPATH "./db/groups"
-# define USERPATH "./db/users/"
-
 # define MAXIDLEN 255
 # define MAXPSWDLEN 10
 
@@ -30,7 +27,7 @@ static void parseuserfile(t_server* server, char *file)
 	linesize = X(-1, getdelim(&buffer, &bufsiz, '\n', userfile), "getdelim");
 	buffer[linesize - 1] = '\0';
 	strncpy(newuser->passwd, buffer, linesize);
-	newuser->elapsed  = getfocustime(file, gettodaydate());
+	newuser->elapsed = getfocustime(file, gettodaydate());
 	t_list *newnode = lstnew(newuser);
 	lstadd_back(&(server->users), newnode);
 	free(buffer);
