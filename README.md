@@ -1,4 +1,4 @@
-# knuTUImer ⏰
+# knuTUImer ⏰📚
 
 `knuTuimer` is a study aids program running on your terminal, providing terminal user interface with `curses` library. <br>
 Make study group with friends and boost up your uni life!
