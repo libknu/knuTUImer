@@ -7,7 +7,7 @@ Make study group with friends and boost up your uni life!
 
 1. How to compile 
 ```
-make && cd client && make 
+make && cd client && make client
 ```
 
 2. How to run
