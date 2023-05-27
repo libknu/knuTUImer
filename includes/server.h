@@ -24,23 +24,29 @@
 # define GROUPPATH "./db/groups"
 # define USERPATH "./db/users/"
 
-typedef struct s_server t_server;
+# define MAXIDLEN 255
+# define MAXPSWDLEN 10
 
-typedef struct	s_fd
-{
-  int	type;
-  void	(*fct_read)(t_server *, int);
-  void	(*fct_write)(t_server *, int);
-  char	buf_read[BUF_SIZE + 1];
-  char	buf_write[BUF_SIZE + 1];
-}t_fd;
+typedef struct s_server t_server;
 
 typedef struct s_user
 {
+	int			fd;
 	char		*id;
 	char		*passwd;
 	long long	elapsed;
 }t_user;
+
+
+typedef struct	s_fd
+{
+	int		type;
+	void	(*fct_read)(t_server *, int);
+	void	(*fct_write)(t_server *, int);
+	char	buf_read[BUF_SIZE + 1];
+	char	buf_write[BUF_SIZE + 1];
+	t_user	*user;
+}t_fd;
 
 typedef struct s_group
 {
@@ -56,13 +62,12 @@ typedef struct s_server
 	t_list* groups;
 	
 	//users logged in
-	t_list* active_users;
+	t_fd	*fds;
 
 	//users signed in
 	t_list* users;
 
 	//server info
-	t_fd	*fds;
 	int		port;
 	int		maxfd;
 	int		max;
@@ -93,6 +98,17 @@ void		loop(t_server*);
 //parsefile.c
 void		readfromfile(t_server*);
 long long	getfocustime(char *user, char *date);
-char	*gettodaydate();
+char		*gettodaydate();
+
+//server_routine.c
+void		login(t_server*, char*, int);
+void		signin(t_server*, char*, int);
+void		groupchat(t_server*, char*, int);
+void		grouplist(t_server*, char*, int);
+void		groupjoin(t_server*, char*, int);
+void		groupmember(t_server*, char*, int);
+void		groupcreate(t_server*, char*, int);
+void		focustime(t_server*, char*, int);
+void		getattendance(t_server*, char*, int);
 
 #endif
