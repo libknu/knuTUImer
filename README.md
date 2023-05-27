@@ -12,9 +12,7 @@ make && cd client && make client
 
 2. How to run
 ```
-./knuTuimer <ip> <port>
-
-./client <port>
+./<executable> <port>
 ```
 3. Supported Features
 
