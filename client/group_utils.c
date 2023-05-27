@@ -146,11 +146,15 @@ void my_group_list(){
             my_group_list();
         }
 
+        
         for(int i=scroll_num; i<total_group_num&&i<list_maximum_num+scroll_num;i++){
-            move(3+i-scroll_num,(max_x- strlen(dummy_groups[i].group_name)));
-            addstr("                                                ");
+            if(scroll_num!=0){
+                move(3+i-scroll_num, ((max_x-strlen(dummy_groups[i-1].group_name))/2)-1);
+                addstr("                                         ");
+            }
             move(3+i-scroll_num, (max_x- strlen(dummy_groups[i].group_name))/2);
             printw("%s",dummy_groups[i].group_name);
+            refresh();
         }
         refresh();
     }
@@ -224,9 +228,9 @@ void group_member_list(){
             group_member_list();
         }
         //채팅창으로 입장하기
-        else if(command=='C'||command=='c'){
-            //TODO: 채팅 구현
-            group_member_list();
+        else if(command=='C'||command=='c'){            
+            // nodelay(stdscr, FALSE);
+            group_chat();
         }else if(command==KEY_UP){//위 방향키
             if(scroll_num!=0) scroll_num--;
         }else if(command==KEY_DOWN){//아래 방향키
@@ -252,8 +256,10 @@ void group_member_list(){
         }
 
         for(int i=scroll_num; i<total_member_num&&i<list_maximum_num+scroll_num;i++){
-            move(3+i-scroll_num,(max_x- strlen(dummy_members[i].user_name)));
-            addstr("                                                ");
+            if(scroll_num!=0){
+                move(3+i-scroll_num, ((max_x-strlen(dummy_members[i-1].user_name))/2)-1);
+                addstr("                                         ");
+            }
             move(3+i-scroll_num, (max_x- strlen(dummy_members[i].user_name))/2);
             printw("%s",dummy_members[i].user_name);
         }
@@ -302,7 +308,6 @@ void make_my_Group(){
 
     char group_for_make[20];
     
-
     erase();
     move(2, (max_x-14)/2);
     printw("Making Group");
