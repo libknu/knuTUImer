@@ -141,9 +141,15 @@ void stopwatch_mode(){ //time up
         usleep(100000);//0.1초마다 순회
     }
     
+    char a[2048];
+    move(1,1);
+    sprintf(a, "time:%d", (int)elapsed_seconds);
+    printw("%s",a);
+    refresh();
     nodelay(stdscr, FALSE);
-    
-    //TODO: 여기서 elapsed_seconds 유저 아이디와 함께 서버로 전송
+
+    sleep(5);
+
     if(command == '3'||command=='s'||command=='S'){
         start_study();
     }else if(command=='H'||command=='h'){

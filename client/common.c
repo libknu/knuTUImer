@@ -15,3 +15,11 @@ void get_terminal_size(){
     getmaxyx(stdscr,max_y,max_x);
     menu_bar=max_y-3;
 }
+
+TIME convert_time_unit(double sec){
+    TIME new_time;
+    new_time.hours = sec / 3600;
+    new_time.minutes = ((int)sec % 3600) / 60;
+    new_time.seconds = (int)sec % 60;
+    return new_time;
+}

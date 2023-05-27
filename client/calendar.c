@@ -1,4 +1,7 @@
 #include<curses.h>
+// #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <time.h>
 #include "client.h"
 
@@ -45,6 +48,8 @@ void show_calendar(){
     int arr[32] = {0,};
     int attended_day;
     int current_day=1;
+    char message[]="attendance:1,0,1,1,0,0,0,1,1,0,1,1,0,1,0,0,1,0,1,1,0,0,1,0,1,1,0,1,1,0,1,1";
+
     int row = 2; //0,1은 헤더가 사용중이기 때문
     int col;
 
@@ -75,6 +80,19 @@ void show_calendar(){
 
 
     /*****************달력 그리기*******************/
+
+    char* start = strstr(message, "attendance:");
+
+    // attendance: 다음 숫자 위치로 이동
+    start += strlen("attendance:");
+
+    // 문자열 파싱하여 arr 배열에 숫자 저장
+    int index = 0;
+    char* token = strtok(start, ",");
+    while (token != NULL && index < sizeof(arr) / sizeof(arr[0])) {
+        arr[index++] = atoi(token);
+        token = strtok(NULL, ",");
+    }
 
     while (current_day <= info.number_of_days_in_month) {//current_day(지금 출력하고 있는 day)가 이번 달의 마지막 날일때 까지
         for (col = info.start_day ;  col < 7 && current_day <= info.number_of_days_in_month; col++) { 

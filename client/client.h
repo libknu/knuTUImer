@@ -28,6 +28,13 @@ typedef struct test_group
 
 extern tg dummy_groups[10];
 
+typedef struct _time
+{
+    int hours;
+    int minutes;
+    int seconds;
+}TIME;
+
 static const char MON[12][4] = {
     "Jan", "Feb", "Mar", "Apr", "May", "Jun",
     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
@@ -45,6 +52,7 @@ void make_dummy_data();
 //common.c
 char* display_time(int hour, int minute, int second);
 void get_terminal_size();
+TIME convert_time_unit(double sec);
 
 //calendar.c
 struct calendarInfo get_calender_info(struct tm);
