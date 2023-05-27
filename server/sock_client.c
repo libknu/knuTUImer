@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <unistd.h>
+#include <string.h>
 #include <sys/socket.h>
 #include "server.h"
 
@@ -24,6 +25,24 @@ void	client_read(t_server *server, int cs)
 				send(i, server->fds[cs].buf_read, r, 0);
 			i++;
 		}
+//		if (strncmp(server->fds[cs].buf_read, "login:", 6) == 0)
+//			login(server, server->fds[cs].buf_read + 6, cs);
+//		else if (strncmp(server->fds[cs].buf_read, "signin:", 7) == 0)
+//			signin(server, server->fds[cs].buf_read + 7, cs);
+//		else if (strncmp(server->fds[cs].buf_read, "pchat:", 6) == 0)
+//			privatechat(server, server->fds[cs].buf_read + 6, cs);
+//		else if (strncmp(server->fds[cs].buf_read, "gchat:", 6) == 0)
+//			groupchat(server, server->fds[cs].buf_read + 6, cs);
+//		else if (strncmp(server->fds[cs].buf_read, "grouplist:", 10) == 0)
+//			grouplist(server, server->fds[cs].buf_read + 10, cs);
+//		else if (strncmp(server->fds[cs].buf_read, "member:", 7) == 0)
+//			groupmember(server, server->fds[cs].buf_read + 7, cs);
+//		else if (strncmp(server->fds[cs].buf_read, "join:", 5) == 0)
+//			groupjoin(server, server->fds[cs].buf_read + 5, cs);
+//		else if (strncmp(server->fds[cs].buf_read, "create:", 7) == 0)
+//			groupcreate(server, server->fds[cs].buf_read + 7, cs);
+//		else
+//			printf("undefined input: %s\n", server->fds[cs].buf_read);
 	}
 }
 

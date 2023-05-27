@@ -5,9 +5,6 @@
 #include "server.h"
 #include "utils.h"
 
-# define MAXIDLEN 255
-# define MAXPSWDLEN 10
-
 static void parseuserfile(t_server* server, char *file)
 {
 	size_t bufsiz = BUFSIZ;
