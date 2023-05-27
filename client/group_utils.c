@@ -1,6 +1,7 @@
 #include "client.h"
 #include<string.h>
 #include<curses.h>
+#include <stdlib.h>
 
 extern int menu_bar, max_x, max_y;
 
@@ -92,9 +93,12 @@ void my_group_list(int fd){
 
     list_maximum_num=max_y-7;
     total_group_num=index;
+    total_group_num=index;
     overflow_num=total_group_num-list_maximum_num;
 
     for(int i=0; i<total_group_num&&i<list_maximum_num;i++){
+        move(3+i, (max_x- strlen(group[i]))/2);
+        printw("%s",group[i]);
         move(3+i, (max_x- strlen(group[i]))/2);
         printw("%s",group[i]);
     }
@@ -168,8 +172,11 @@ void my_group_list(int fd){
         for(int i=scroll_num; i<total_group_num&&i<list_maximum_num+scroll_num;i++){
             if(scroll_num!=0){
                 move(3+i-scroll_num, (((max_x-strlen(group[i-1]))/2)-1));
+                move(3+i-scroll_num, (((max_x-strlen(group[i-1]))/2)-1));
                 addstr("                                         ");
             }
+            move(3+i-scroll_num, (max_x- strlen(group[i]))/2);
+            printw("%s",group[i]);
             move(3+i-scroll_num, (max_x- strlen(group[i]))/2);
             printw("%s",group[i]);
             refresh();
@@ -181,6 +188,7 @@ void my_group_list(int fd){
 void group_member_list(int fd, char* group){
 
     //TODO: 실제로는 그룹명을 서버로 전송하여 해당 그룹의 멤버 리스트를 받아와야 함
+
     int command;
     int list_maximum_num;
     int total_member_num; //해당 그룹의 멤버 수
@@ -221,6 +229,7 @@ void group_member_list(int fd, char* group){
 
     list_maximum_num=max_y-8;
     total_member_num=index-1;
+    total_member_num=index-1;
     overflow_num=total_member_num-list_maximum_num;
 
     noecho();
@@ -231,6 +240,8 @@ void group_member_list(int fd, char* group){
     printw("Member List");
 
     for(int i=0; i<total_member_num&&i<list_maximum_num;i++){
+        move(3+i, (max_x- strlen(member[i]))/2);
+        printw("%s",member[i]);
         move(3+i, (max_x- strlen(member[i]))/2);
         printw("%s",member[i]);
     }
@@ -279,8 +290,11 @@ void group_member_list(int fd, char* group){
         for(int i=scroll_num; i<total_member_num&&i<list_maximum_num+scroll_num;i++){
             if(scroll_num!=0){
                 move(3+i-scroll_num, ((max_x-strlen(member[i-1]))/2)-1);
+                move(3+i-scroll_num, ((max_x-strlen(member[i-1]))/2)-1);
                 addstr("                                         ");
             }
+            move(3+i-scroll_num, (max_x- strlen(member[i]))/2);
+            printw("%s",member[i]);
             move(3+i-scroll_num, (max_x- strlen(member[i]))/2);
             printw("%s",member[i]);
         }

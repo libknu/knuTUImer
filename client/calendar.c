@@ -1,4 +1,7 @@
 #include<curses.h>
+// #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <time.h>
 #include "client.h"
 #include <stdlib.h>
@@ -52,6 +55,8 @@ void show_calendar(int fd){
     int arr[32] = {0,};
     int attended_day;
     int current_day=1;
+    char message[]="attendance:1,0,1,1,0,0,0,1,1,0,1,1,0,1,0,0,1,0,1,1,0,0,1,0,1,1,0,1,1,0,1,1";
+
     int row = 2; //0,1은 헤더가 사용중이기 때문
     int col;
 
@@ -80,6 +85,7 @@ void show_calendar(int fd){
 
     /*****************달력 그리기*******************/
 
+<<<<<<< HEAD
     send(fd,message_to_server,2048,0);
     recv(fd, messge_form_server,2048,0);
 
@@ -87,6 +93,13 @@ void show_calendar(int fd){
     char* start = strstr(messge_form_server, "attendance:");
     // attendance: 다음 숫자 위치로 이동
     start += strlen("attendance:");
+=======
+    char* start = strstr(message, "attendance:");
+
+    // attendance: 다음 숫자 위치로 이동
+    start += strlen("attendance:");
+
+>>>>>>> faf76592c1fcae72bbaaa0cc46b377a64e3f2790
     // 문자열 파싱하여 arr 배열에 숫자 저장
     int index = 0;
     char* token = strtok(start, ",");

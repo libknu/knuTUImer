@@ -17,5 +17,4 @@ void	lstclear(t_list **lst, void (*del)(void *));
 void	lstiter(t_list *lst, void (*f)(void *));
 t_list	*lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *));
 
-
 #endif
