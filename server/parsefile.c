@@ -11,6 +11,7 @@ static void parseuserfile(t_server* server, char *file)
 	char *buffer = (char *)malloc(sizeof(char) * bufsiz);
 
 	t_user *newuser = (t_user *)malloc(sizeof(t_user));
+	newuser->fd =  -1;
 	newuser->id = (char *)malloc(sizeof(char) * MAXIDLEN);
 	newuser->passwd= (char *)malloc(sizeof(char) * MAXPSWDLEN);
 

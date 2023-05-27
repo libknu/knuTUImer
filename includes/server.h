@@ -29,6 +29,15 @@
 
 typedef struct s_server t_server;
 
+typedef struct s_user
+{
+	int			fd;
+	char		*id;
+	char		*passwd;
+	long long	elapsed;
+}t_user;
+
+
 typedef struct	s_fd
 {
 	int		type;
@@ -38,13 +47,6 @@ typedef struct	s_fd
 	char	buf_write[BUF_SIZE + 1];
 	t_user	*user;
 }t_fd;
-
-typedef struct s_user
-{
-	char		*id;
-	char		*passwd;
-	long long	elapsed;
-}t_user;
 
 typedef struct s_group
 {
@@ -101,10 +103,12 @@ char		*gettodaydate();
 //server_routine.c
 void		login(t_server*, char*, int);
 void		signin(t_server*, char*, int);
-void		privatechat(t_server*, char*, int);
 void		groupchat(t_server*, char*, int);
 void		grouplist(t_server*, char*, int);
+void		groupjoin(t_server*, char*, int);
 void		groupmember(t_server*, char*, int);
 void		groupcreate(t_server*, char*, int);
+void		focustime(t_server*, char*, int);
+void		getattendance(t_server*, char*, int);
 
 #endif
