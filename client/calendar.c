@@ -51,7 +51,7 @@ void show_calendar(int fd){
     
     char message_to_server[2048]; //서버에 보낼 메시지
     char message_from_server[2048]; //서버로부터 받은 메시지
-    // char message_from_server[2048]="attendance:1,0,1,1,0,0,0,1,1,0,1,1,0,1,0,0,1,0,1,1,0,0,1,0,1,1,0,1,1,0,1,1";
+    //char message_from_server[2048]="attendance:1,0,1,1,0,0,0,1,1,0,1,1,0,1,0,0,1,0,1,1,0,0,1,0,1,1,0,1,1,0,1,1";
     
     int arr[32] = {0,};
     int attended_day;
@@ -85,15 +85,15 @@ void show_calendar(int fd){
 
     /*****************달력 그리기*******************/
 
-    // sprintf(message_to_server,"attendance:%d",(tm.tm_mon)+1);
-    move(2,2);
+    sprintf(message_to_server,"attendance:%d",(tm.tm_mon)+1);
+    //move(2,2);
     // printw("%s",message_to_server);
 
-    // send(fd,message_to_server,2048,0);
-    // recv(fd, message_from_server,2048,0);
+    send(fd,message_to_server,2048,0);
+    recv(fd, message_from_server,2048,0);
 
-    move(2,2);
-    printw("%s",message_from_server);
+    //move(2,2);
+    //printw("%s",message_from_server);
     //attendance: 다음 숫자 위치 찾기
     char* start = strstr(message_from_server, "attendance:");
     // attendance: 다음 숫자 위치로 이동
