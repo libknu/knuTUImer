@@ -15,13 +15,15 @@ static void	set_port(t_server* server, int ac, char **av)
 int main(int ac, char *av[])
 {
 	t_server server;
+	
+	server.users=NULL;
+	server.groups=NULL;
 
 	readfromfile(&server);
 	init_env(&server);
 	set_port(&server, ac, av);
 	srv_create(&server, server.port);
 	loop(&server);
-
 	//TODO: server cleanup procedure
 
 	return (0);
