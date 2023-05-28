@@ -248,24 +248,15 @@ void group_member_list(int fd, char* group){
         printw("%s",member[i]);
     }
 
-    move(menu_bar-2,(max_x-23)/2);
+    move(menu_bar-1,(max_x-23)/2);
     converted_time = convert_time_unit(time);
 
     printw("focusing time:%s",display_time(converted_time.hours,converted_time.minutes,converted_time.seconds));
     
-    move(menu_bar-1,(max_x-31)/2);
-    addstr("If you want to chat, press \"C\"");
-    move(5, 47);
-
     while (1)
     {
-         command = getch();
-
-        //채팅창으로 입장하기
-        if(command=='C'||command=='c'){            
-            // nodelay(stdscr, FALSE);
-            group_chat(fd);
-        }else if(command==KEY_UP){//위 방향키
+        command = getch();
+        if(command==KEY_UP){//위 방향키
             if(scroll_num!=0) scroll_num--;
         }else if(command==KEY_DOWN){//아래 방향키
             if(scroll_num<total_member_num-list_maximum_num) scroll_num++;
