@@ -4,7 +4,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 
-extern max_x, max_y;
+extern int max_x, max_y;
 
 void login(int fd){    
     //TODO : 서버에 아이디를 전송하면 서버가 로그인 성공 여부 반환
@@ -13,7 +13,6 @@ void login(int fd){
     char password[20]; //password 입력값
     char message_to_server[2048]; //서버에 보낼 메시지
     char message_form_server[2048]; //서버로부터 받은 메시지
-    int sock = socket(AF_INET, SOCK_STREAM, 0);
 
     /***************화면 구성***************/
     noecho();
@@ -37,8 +36,10 @@ void login(int fd){
     //소켓
     send(fd,message_to_server,2048,0);
 
-    recv(fd, message_form_server,2048,0);
 
+    // printf("%s",message_form_server);
+    recv(fd, message_form_server,2048,0);
+    refresh();
     if(strcmp(message_form_server,"FAILED")==0){//만약 아이디나 패스워드가 일치하지 않으면
         erase();// 화면 내용을 다 지운 뒤
         curs_set(0);
@@ -47,9 +48,10 @@ void login(int fd){
         refresh();
         sleep(1);//1초간 오류를 보여주고
         first_page(fd);
-    }else if(strcmp(message_form_server,"SUCCESS")==0){//로그인 성공
+    }else{//로그인 성공
         mypage(fd);
     }
+    endwin();
 }
 
 void creatID(int fd){
@@ -59,7 +61,7 @@ void creatID(int fd){
     char id[20]; //id 입력값
     char password[20]; //password 입력값
     char message_to_server[2048]; //서버에 보낼 메시지
-    char messge_form_server[2048]; //서버로부터 받은 메시지
+    char message_form_server[2048]; //서버로부터 받은 메시지
 
     erase();// 화면 내용을 다 지움
 
@@ -79,16 +81,18 @@ void creatID(int fd){
 
     sprintf(message_to_server,"signin:%s,%s",id,password);
     send(fd, message_to_server, 2048,0);
-    recv(fd, messge_form_server,2048,0);
 
-    if(strcmp(messge_form_server,"FAILED")==0){//만약 아이디가 중복이면
+    recv(fd, message_form_server,2048,0);
+    // printw("%s",message_form_server);
+
+    if(strcmp(message_form_server,"FAILED")==0){//만약 아이디가 중복이면
         erase();// 화면 내용을 다 지운 뒤
         curs_set(0);
         move(2, (max_x/2)-13);  addstr("This ID is already exist.");
         refresh();
         sleep(1);//1초간 오류를 보여주고
         first_page(fd);//아이디 만들기 다시 시작
-    }else if(strcmp(messge_form_server,"SUCCESS")==0){
+    }else if(strcmp(message_form_server,"SUCCESS")==0){
         erase();// 화면 내용을 다 지운 뒤
         curs_set(0);
         move(2, (max_x-42)/2);  addstr("A new ID has been created. Please log in.");
