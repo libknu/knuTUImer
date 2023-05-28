@@ -1,11 +1,11 @@
 #include<curses.h>
-// #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #include "client.h"
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 
@@ -50,7 +50,8 @@ void show_calendar(int fd){
     //TODO: 날짜 정보 처리 부분은 서버로 옮기는게 좋은지 논의
     
     char message_to_server[2048]; //서버에 보낼 메시지
-    char message_form_server[2048]; //서버로부터 받은 메시지
+    char message_from_server[2048]; //서버로부터 받은 메시지
+    // char message_from_server[2048]="attendance:1,0,1,1,0,0,0,1,1,0,1,1,0,1,0,0,1,0,1,1,0,0,1,0,1,1,0,1,1,0,1,1";
     
     int arr[32] = {0,};
     int attended_day;
@@ -84,17 +85,17 @@ void show_calendar(int fd){
 
     /*****************달력 그리기*******************/
 
-    sprintf(message_to_server,"attendance:%d",(tm.tm_mon)+1);
-    // move(2,2);
+    // sprintf(message_to_server,"attendance:%d",(tm.tm_mon)+1);
+    move(2,2);
     // printw("%s",message_to_server);
 
-    send(fd,message_to_server,2048,0);
-    recv(fd, message_form_server,2048,0);
+    // send(fd,message_to_server,2048,0);
+    // recv(fd, message_from_server,2048,0);
 
     move(2,2);
-    printw("%s",message_form_server);
-    // attendance: 다음 숫자 위치 찾기
-    char* start = strstr(message_form_server, "attendance:");
+    printw("%s",message_from_server);
+    //attendance: 다음 숫자 위치 찾기
+    char* start = strstr(message_from_server, "attendance:");
     // attendance: 다음 숫자 위치로 이동
     start += strlen("attendance:");
     // 문자열 파싱하여 arr 배열에 숫자 저장
@@ -132,7 +133,5 @@ void show_calendar(int fd){
     refresh();
     nodelay(stdscr, FALSE);
     while (!getch());
-
-    sleep(4);
     return;    
 }

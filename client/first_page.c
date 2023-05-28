@@ -1,4 +1,5 @@
 #include "client.h"
+#include <unistd.h>
 
 extern int max_x, max_y;
 

@@ -2,6 +2,8 @@
 #include<string.h>
 #include<curses.h>
 #include <stdlib.h>
+#include <unistd.h>
+
 
 extern int menu_bar, max_x, max_y;
 
@@ -62,14 +64,14 @@ void my_group_list(int fd){
     int scroll_num=0; //아래 방향키로 스크롤한 횟수
     char group[100][10];
     char message_to_server[2048]; //서버에 보낼 메시지
-    char message_form_server[2048]; //서버로부터 받은 메시지
+    char message_from_server[2048]; //서버로부터 받은 메시지
 
     sprintf(message_to_server,"grouplist:");
     send(fd, message_to_server, 2048,0);
-    recv(fd, message_form_server, 2048,0);
+    recv(fd, message_from_server, 2048,0);
 
     // grouplist: 다음 문자열 위치 찾기
-    char* start = strstr(message_form_server, "grouplist:");
+    char* start = strstr(message_from_server, "grouplist:");
     
     // grouplist: 다음 문자열 위치로 이동
     start += strlen("grouplist:");
@@ -200,15 +202,15 @@ void group_member_list(int fd, char* group){
     double time;
 
     char message_to_server[2048]; //서버에 보낼 메시지
-    char message_form_server[2048]; //서버로부터 받은 메시지
+    char message_from_server[2048]; //서버로부터 받은 메시지
 
     sprintf(message_to_server,"member:%s", group);
 
     send(fd, message_to_server, 2048,0);
-    recv(fd, message_form_server, 2048,0);
+    recv(fd, message_from_server, 2048,0);
 
     // member: 다음 문자열 위치 찾기
-    char *start = strstr(message_form_server, "member:");
+    char *start = strstr(message_from_server, "member:");
 
     // member: 다음 문자열 위치로 이동
     start += strlen("member:");
@@ -308,7 +310,7 @@ void join_other_Group(int fd){
 
     char group_for_join[20];
     char message_to_server[2048]; //서버에 보낼 메시지
-    char message_form_server[2048]; //서버로부터 받은 메시지
+    char message_from_server[2048]; //서버로부터 받은 메시지
     erase();
     move(2, (max_x-14)/2);
     printw("Joining Group");
@@ -328,11 +330,11 @@ void join_other_Group(int fd){
 
     sprintf(message_to_server,"join:%s",group_for_join);
     send(fd, message_to_server, 2048,0);
-    recv(fd, message_form_server, 2048,0);
+    recv(fd, message_from_server, 2048,0);
 
     if(strcmp("B",group_for_join)==0||strcmp("b",group_for_join)){
         manage_groups(fd);
-    }else if(strcmp(message_form_server,"SUCCESS")){
+    }else if(strcmp(message_from_server,"SUCCESS")){
         erase();
         move(2, (max_x-23)/2);
         addstr("Your join is complete.");
@@ -353,7 +355,7 @@ void make_my_Group(int fd){
 
 
     char message_to_server[2048]; //서버에 보낼 메시지
-    char message_form_server[2048]; //서버로부터 받은 메시지
+    char message_from_server[2048]; //서버로부터 받은 메시지
 
     char group_for_make[20];
     
@@ -376,12 +378,12 @@ void make_my_Group(int fd){
 
     sprintf(message_to_server,"creat:%s",group_for_make);
     send(fd, message_to_server, 2048,0);
-    recv(fd, message_form_server, 2048,0);
+    recv(fd, message_from_server, 2048,0);
 
 
     if(strcmp("B",group_for_make)==0||strcmp("b",group_for_make)){
         manage_groups(fd);
-    }else if(strcmp(message_form_server,"SUCCESS")){
+    }else if(strcmp(message_from_server,"SUCCESS")){
         erase();
         move(2, (max_x-23)/2);
         addstr("New group created.");

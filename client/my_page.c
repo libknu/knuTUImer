@@ -1,5 +1,6 @@
 #include "client.h"
 #include <math.h>
+#include <unistd.h>
 
 extern int max_x, max_y, menu_bar;
 int goal;
@@ -24,7 +25,6 @@ void mypage(int fd){
     //TODO: 서버에 유저 아이디를 전송하면, 서버는 오늘 날짜를 확인하여 해단 유저의 첫 접속인 경우, 아닌 경우를 나누어 리턴
     int First_access_flag=1;
     int command;
-    //
     double focusing;
     TIME focusing_converted;
 
