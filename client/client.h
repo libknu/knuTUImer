@@ -16,13 +16,6 @@ typedef struct _time
     int seconds;
 } TIME;
 
-typedef struct _time
-{
-    int hours;
-    int minutes;
-    int seconds;
-}TIME;
-
 static const char MON[12][4] = {
     "Jan", "Feb", "Mar", "Apr", "May", "Jun",
     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
@@ -38,10 +31,7 @@ printw("!!Menu bar is not available on the current page!!");
 char* display_time(int hour, int minute, int second);
 void get_terminal_size();
 TIME convert_time_unit(double sec);
-<<<<<<< HEAD
 bool is_exist(char* input, char arr[][10],int len);
-=======
->>>>>>> faf76592c1fcae72bbaaa0cc46b377a64e3f2790
 
 //calendar.c
 struct calendarInfo get_calender_info(struct tm);
