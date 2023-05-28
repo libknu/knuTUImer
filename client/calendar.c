@@ -1,6 +1,13 @@
 #include<curses.h>
+// #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <time.h>
 #include "client.h"
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/socket.h>
 
 extern int max_x, max_y, menu_bar;
 
@@ -37,14 +44,18 @@ struct calendarInfo get_calender_info(struct tm tm) {
     return info;
 }
 
-void show_calendar(){ 
+void show_calendar(int fd){ 
 
     //TODO: 서버에 유저의 아이디를 전송하여 출석 정보 저장및 현재 client의 출석기록 받아옴
     //TODO: 날짜 정보 처리 부분은 서버로 옮기는게 좋은지 논의
     
+    char message_to_server[2048]; //서버에 보낼 메시지
+    char message_form_server[2048]; //서버로부터 받은 메시지
+    
     int arr[32] = {0,};
     int attended_day;
     int current_day=1;
+
     int row = 2; //0,1은 헤더가 사용중이기 때문
     int col;
 
@@ -54,7 +65,6 @@ void show_calendar(){
 
     //오늘의 日을 1로 함
     //TODO: 이 정보 서버와 통신하여 입/출력해야 함
-    arr[tm.tm_mday] = 1;
     clear();
     curs_set(0); //커서를 안보이게 함
 
@@ -70,11 +80,27 @@ void show_calendar(){
     move(1,(max_x/2)-12);
     addstr("Su Mo Tu We Th Fr Sa");
 
-    //TODO: 오늘 날짜를 서버에 전송하면 서버가 캘린더 정보 구조체를 보내주도록 하는 방안 논의(생각해보니 클라이언트단의 역할이 아닌 것 같기도 해서...)
     struct calendarInfo info=get_calender_info(tm);
 
-
     /*****************달력 그리기*******************/
+
+    sprintf(message_to_server,"attendance:%d",(tm.tm_mon)+1);
+    send(fd,message_to_server,2048,0);
+    recv(fd, message_form_server,2048,0);
+
+    move(2,2);
+    printw("%s",message_form_server);
+    // attendance: 다음 숫자 위치 찾기
+    char* start = strstr(message_form_server, "attendance:");
+    // attendance: 다음 숫자 위치로 이동
+    start += strlen("attendance:");
+    // 문자열 파싱하여 arr 배열에 숫자 저장
+    int index = 0;
+    char* token = strtok(start, ",");
+    while (token != NULL && index < sizeof(arr) / sizeof(arr[0])) {
+        arr[index++] = atoi(token);
+        token = strtok(NULL, ",");
+    }
 
     while (current_day <= info.number_of_days_in_month) {//current_day(지금 출력하고 있는 day)가 이번 달의 마지막 날일때 까지
         for (col = info.start_day ;  col < 7 && current_day <= info.number_of_days_in_month; col++) { 
@@ -103,5 +129,7 @@ void show_calendar(){
     refresh();
     nodelay(stdscr, FALSE);
     while (!getch());
+
+    sleep(4);
     return;    
 }

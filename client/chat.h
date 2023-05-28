@@ -1,0 +1,4 @@
+#define BUF_SIZE 127
+#define MESSAGE_SIZE 100
+#define USER_NAME_SIZE 10
+#define GROUP_NAME_SIZE 10

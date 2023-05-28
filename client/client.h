@@ -9,24 +9,12 @@ struct calendarInfo
     int start_day;//이번 달은 무슨 요일부터?
 };
 
-//TODO: 실제 구조체에는 더 많은 정보 필요(출석 정보 등...)
-typedef struct test_member
-{   
-    char user_name[20];//유저 이름
-    double study_time; //유저의 총 공부 시간
-    char* joined_groups;//가입된 그룹
-}tm;
-
-extern tm dummy_members[20];
-
-typedef struct test_group
-{   
-    char group_name[20];//그룹명
-    double study_time; //그룹원의 총 공부 시간
-    char *group_members; //그룹원 리스트
-}tg;
-
-extern tg dummy_groups[10];
+typedef struct _time
+{
+    int hours;
+    int minutes;
+    int seconds;
+} TIME;
 
 static const char MON[12][4] = {
     "Jan", "Feb", "Mar", "Apr", "May", "Jun",
@@ -39,39 +27,42 @@ printw("Home: 'H' | Start studying: 'S' | Manage groups: 'G' | Check attendance 
 printw("!!Menu bar is not available on the current page!!");
 
 
-//TODO: 실제 구현 및 제출 시 삭제
-void make_dummy_data();
-
 //common.c
 char* display_time(int hour, int minute, int second);
 void get_terminal_size();
+TIME convert_time_unit(double sec);
+bool is_exist(char* input, char arr[][10],int len);
 
 //calendar.c
 struct calendarInfo get_calender_info(struct tm);
-void show_calendar();
+void show_calendar(int fd);
 
 //first_page.c
-void first_page();
+void first_page(int fd);
 
 //auth.c
-void login();
-void creatID();
+void login(int fd);
+void creatID(int fd);
 
 //mypage.c
-void mypage();
+void mypage(int fd);
 
 //timer_utils.c
-void start_study();
-void stopwatch_mode();
-void timer_mode();
-void pomodoro_mode();
+void start_study(int fd);
+void stopwatch_mode(int fd);
+void timer_mode(int fd);
+void pomodoro_mode(int fd);
 
 //group_utils.c
-void manage_groups();
-void my_group_list();
-void group_member_list();
-void join_other_Group();
-void make_my_Group();
+void manage_groups(int fd);
+void my_group_list(int fd);
+void group_member_list(int fd, char* group);
+void join_other_Group(int fd);
+void make_my_Group(int fd);
+
+
+//chat.c
+void group_chat(int fd);
 
 //setup.c
 int setup(int, char **);

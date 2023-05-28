@@ -4,7 +4,7 @@
 
 extern int max_x, max_y, menu_bar;
 
-void start_study(){ //Choose mode(스톱워치(stdin(1)), 타이머(stdin(2)), 뽀모도로(stdin(3)))
+void start_study(int fd){ //Choose mode(스톱워치(stdin(1)), 타이머(stdin(2)), 뽀모도로(stdin(3)))
     int command;
     
     /***************화면 구성***************/
@@ -20,38 +20,42 @@ void start_study(){ //Choose mode(스톱워치(stdin(1)), 타이머(stdin(2)), �
     /****************커맨드 입력****************/
     command = getch();
     if(command=='1'){        
-        timer_mode();
+        timer_mode(fd);
     }else if(command=='2'){
-        stopwatch_mode();
+        stopwatch_mode(fd);
     }else if(command=='3'){
-        pomodoro_mode();
+        pomodoro_mode(fd);
     }else if(command=='H'||command=='h'){
-        mypage();
+        mypage(fd);
     }else if(command=='S'||command=='s'){        
-        start_study();
+        start_study(fd);
     }else if(command=='G'||command=='g'){
-        manage_groups();
-        start_study();
+        manage_groups(fd);
+        start_study(fd);
     }else if(command=='A'||command=='a'){
-        show_calendar();
-        start_study();
+        show_calendar(fd);
+        start_study(fd);
     }else{
         erase();// 화면 내용을 다 지운 뒤
         move(2, (max_x/2)-15);     addstr("Please enter the correct key.");
         refresh();
         sleep(1);//1초간 오류를 보여주고
-        start_study();
+        start_study(fd);
     }
     /****************************************/
 }
 
-void stopwatch_mode(){ //time up
+void stopwatch_mode(int fd){ //time up
 
     //TODO: 유저의 아이디와 유저가 추가로 한 공부시간을 서버로 전송하면, 서버는 유저의 기존 공부시간에 추가 공부시간을 더해야 함 
     int command;
     bool running_flag = false;
     bool in_stopwatch_flag = true;
     bool start_flag=true;
+
+    char message_to_server[2048]; //서버에 보낼 메시지
+    char messge_form_server[2048]; //서버로부터 받은 메시지
+
     time_t start_time, current_time, pause_start_time, pause_end_time;
     double pause_time;//휴식 시간의 총합
     double elapsed_seconds;//현재시간-시작시간-휴식시간
@@ -77,7 +81,6 @@ void stopwatch_mode(){ //time up
     }
     while (in_stopwatch_flag){
         command = getch();
-        // 각 조건에 적당한 처리를 해 주어야 함
         if (command != ERR){
             if (command == '1' && !running_flag){ // 작동중
                 running_flag = true;
@@ -105,7 +108,7 @@ void stopwatch_mode(){ //time up
                 if(running_flag){
                     time(&pause_start_time);
                 }
-                show_calendar();
+                show_calendar(fd);
                 running_flag = false;
                 command='1';
                 nodelay(stdscr, TRUE);
@@ -141,26 +144,36 @@ void stopwatch_mode(){ //time up
         usleep(100000);//0.1초마다 순회
     }
     
+    char a[2048];
+    move(1,1);
+    sprintf(a, "time:%d", (int)elapsed_seconds);
+    printw("%s",a);
+    refresh();
     nodelay(stdscr, FALSE);
     
-    //TODO: 여기서 elapsed_seconds 유저 아이디와 함께 서버로 전송
+    sprintf(message_to_server, "time:%d", (int)elapsed_seconds);
+    send(fd,message_to_server,2048,0);
+
     if(command == '3'||command=='s'||command=='S'){
-        start_study();
+        start_study(fd);
     }else if(command=='H'||command=='h'){
-        mypage();
+        mypage(fd);
     }else if(command=='G'||command=='g'){
-        manage_groups();
+        manage_groups(fd);
     }
     endwin();
 }
 
-void timer_mode(){ //time down
+void timer_mode(int fd){ //time down
     //TODO: 유저의 아이디와 유저가 추가로 한 공부시간을 서버로 전송하면, 서버는 유저의 기존 공부시간에 추가 공부시간을 더해야 함 
     int command;
     bool start_flag=true;
     int goal_hour, goal_minute;
     bool running_flag = false;
     bool in_timer_flag = true;
+
+    char message_to_server[2048]; //서버에 보낼 메시지
+    char messge_form_server[2048]; //서버로부터 받은 메시지
     
     time_t start_time, current_time, pause_start_time, pause_end_time;
     double pause_time;//휴식 시간의 총합
@@ -241,7 +254,7 @@ void timer_mode(){ //time down
                     time(&pause_start_time);
                 }
                 running_flag=false;
-                show_calendar();
+                show_calendar(fd);
                 nodelay(stdscr, TRUE);
                 //출결 기록을 띄우고 나면 화면을 다시 구성해야 함.
                 erase();
@@ -284,20 +297,26 @@ void timer_mode(){ //time down
     
     nodelay(stdscr, FALSE);
     
-    //TODO: 여기서 elapsed_seconds 유저 아이디와 함께 서버로 전송
+    sprintf(message_to_server, "time:%d", (int)elapsed_seconds);
+    send(fd,message_to_server,2048,0);
+    
+
     if(command == '3'||command=='s'||command=='S'){
-        start_study();
+        start_study(fd);
     }else if(command=='H'||command=='h'){
-        mypage();
+        mypage(fd);
     }else if(command=='G'||command=='g'){
-        manage_groups();
+        manage_groups(fd);
     }
 }
 
-void pomodoro_mode(){
+void pomodoro_mode(int fd){
     //TODO: 유저의 아이디와 유저가 추가로 한 공부시간을 서버로 전송하면, 서버는 유저의 기존 공부시간에 추가 공부시간을 더해야 함     
     int goal_sets;
     int command;
+
+    char message_to_server[2048]; //서버에 보낼 메시지
+    char messge_form_server[2048]; //서버로부터 받은 메시지
 
     bool running_flag = false; //포모도로 시간이 흐르는 중인지 확인하는 플래그
     bool in_pomo_flag = true;  //포모도로 타이머 자체가 작동중인지 확인하는 플래그. false면 함수가 끝남
@@ -305,10 +324,7 @@ void pomodoro_mode(){
     bool start_flag=true;
 
     time_t start_time, current_time, pause_start_time, pause_end_time;
-    
-    // time_t work_start_time, work_current_time, work_pause_start_time, work_pause_end_time;
-    // time_t rest_start_time, rest_current_time, rest_pause_start_time, rest_pause_end_time;
-    
+
     double pause_time, elapsed_seconds;
 
     double work_pause_time; //공부중일 때, 현재 세트에서의 일시중지 시간의 총합
@@ -384,7 +400,7 @@ void pomodoro_mode(){
                     time(&pause_start_time);
                 }
                 running_flag=false;
-                show_calendar();
+                show_calendar(fd);
                 nodelay(stdscr, TRUE);
                 //출결 기록을 띄우고 나면 화면을 다시 구성해야 함.
                 erase();
@@ -474,12 +490,14 @@ void pomodoro_mode(){
     
     nodelay(stdscr, FALSE);
     
-    //TODO: 여기서 total_elapsed_seconds 유저 아이디와 함께 서버로 전송
+    sprintf(message_to_server, "time:%d", (int)total_elapsed_seconds);
+    send(fd,message_to_server,2048,0);
+
     if(command == '3'||command=='s'||command=='S'){
-        start_study();
+        start_study(fd);
     }else if(command=='H'||command=='h'){
-        mypage();
+        mypage(fd);
     }else if(command=='G'||command=='g'){
-        manage_groups();
+        manage_groups(fd);
     }
 }

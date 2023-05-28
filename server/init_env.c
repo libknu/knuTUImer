@@ -18,6 +18,11 @@ void	init_env(t_server *server)
 	//get max fd and set
 	X(-1, getrlimit(RLIMIT_NOFILE, &rlim), "getrlimit"); //NOFILE - number of open files
 	server->maxfd = rlim.rlim_cur;
+	
+	if (server->maxfd > 100) {
+    	server->maxfd = 100;
+	}
+
 	server->fds = (t_fd*)Xv(NULL, malloc(sizeof(*server->fds) * server->maxfd), "malloc");
 	i = 0;
 	while (i < server->maxfd)
