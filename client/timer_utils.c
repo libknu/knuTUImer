@@ -150,14 +150,9 @@ void stopwatch_mode(int fd){ //time up
     printw("%s",a);
     refresh();
     nodelay(stdscr, FALSE);
-<<<<<<< HEAD
     
     sprintf(message_to_server, "time:%d", (int)elapsed_seconds);
     send(fd,message_to_server,2048,0);
-=======
-
-    sleep(5);
->>>>>>> faf76592c1fcae72bbaaa0cc46b377a64e3f2790
 
     if(command == '3'||command=='s'||command=='S'){
         start_study(fd);
