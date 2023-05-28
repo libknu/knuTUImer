@@ -376,7 +376,7 @@ void make_my_Group(int fd){
     scanw("%s",group_for_make);
     noecho();
 
-    sprintf(message_to_server,"creat:%s",group_for_make);
+    sprintf(message_to_server,"create:%s",group_for_make);
     send(fd, message_to_server, 2048,0);
     recv(fd, message_from_server, 2048,0);
 
