@@ -1,5 +1,6 @@
 #include "client.h"
 #include <stdlib.h>
+#include <string.h>
 #include <curses.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -35,7 +36,6 @@ void login(int fd){
     sprintf(message_to_server,"login:%s,%s",id,password);
     //소켓
     send(fd,message_to_server,2048,0);
-
 
     // printf("%s",message_form_server);
     recv(fd, message_form_server,2048,0);

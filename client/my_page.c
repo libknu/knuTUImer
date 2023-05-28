@@ -8,7 +8,6 @@ void set_goal(int fd){
     noecho();
     curs_set(0);
     erase();
-    
     move(3, (max_x-33)/2);     addstr("Please Enter Today's Goal(hours)");
     refresh();
 

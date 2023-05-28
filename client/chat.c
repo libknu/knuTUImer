@@ -30,7 +30,7 @@ char group[GROUP_NAME_SIZE]="dgroup";
 extern max_x, max_y, menu_bar;
 
 //TODO: 서버와 통신 및 인자로 유저 정보, 그룹 정보 받아오기
-void group_chat(){
+void group_chat(int fd){
 
     char message_for_view[MESSAGE_SIZE];
     char message_for_type[BUF_SIZE];
@@ -43,7 +43,9 @@ void group_chat(){
     move(menu_bar-1, (max_x-53)/2);
     printw("If you want to leave this chat room, type \"B\" or \"b\"");
     move(menu_bar-2, (max_x-53)/2); printw("Me: ");
-
+    nodelay(stdscr, FALSE);
+    getch();
+    sleep(1);
 
     /***************************************************/
     // int sock;
