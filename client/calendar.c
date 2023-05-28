@@ -84,9 +84,12 @@ void show_calendar(int fd){
 
     /*****************달력 그리기*******************/
 
+    sprintf(message_to_server,"attendance:%d",(tm.tm_mon)+1);
     send(fd,message_to_server,2048,0);
     recv(fd, message_form_server,2048,0);
 
+    move(2,2);
+    printw("%s",message_form_server);
     // attendance: 다음 숫자 위치 찾기
     char* start = strstr(message_form_server, "attendance:");
     // attendance: 다음 숫자 위치로 이동
@@ -126,5 +129,7 @@ void show_calendar(int fd){
     refresh();
     nodelay(stdscr, FALSE);
     while (!getch());
+
+    sleep(4);
     return;    
 }
