@@ -63,12 +63,13 @@ void my_group_list(int fd){
     int overflow_num; //화면에 표시되지 않고 스크롤링해야 보이는 그룹의 개수
     int scroll_num=0; //아래 방향키로 스크롤한 횟수
     char group[100][10];
-    char message_to_server[2048]; //서버에 보낼 메시지
-    char message_from_server[2048]; //서버로부터 받은 메시지
+    char message_from_server[] = "grouplist:group1,group2,gruuup,mygroup";
+    // char message_to_server[2048]; //서버에 보낼 메시지
+    // char message_from_server[2048]; //서버로부터 받은 메시지
 
-    sprintf(message_to_server,"grouplist:");
-    send(fd, message_to_server, 2048,0);
-    recv(fd, message_from_server, 2048,0);
+    // sprintf(message_to_server,"grouplist:");
+    // send(fd, message_to_server, 2048,0);
+    // recv(fd, message_from_server, 2048,0);
 
     // grouplist: 다음 문자열 위치 찾기
     char* start = strstr(message_from_server, "grouplist:");
@@ -200,14 +201,14 @@ void group_member_list(int fd, char* group){
     TIME converted_time;
     char member[100][10];
     double time;
+    char message_from_server[] = "member: 600,user1,user2,juwon,jiwo,jiin,kim,honggildong";
+    // char message_to_server[2048]; //서버에 보낼 메시지
+    // char message_from_server[2048]; //서버로부터 받은 메시지
 
-    char message_to_server[2048]; //서버에 보낼 메시지
-    char message_from_server[2048]; //서버로부터 받은 메시지
+    // sprintf(message_to_server,"member:%s", group);
 
-    sprintf(message_to_server,"member:%s", group);
-
-    send(fd, message_to_server, 2048,0);
-    recv(fd, message_from_server, 2048,0);
+    // send(fd, message_to_server, 2048,0);
+    // recv(fd, message_from_server, 2048,0);
 
     // member: 다음 문자열 위치 찾기
     char *start = strstr(message_from_server, "member:");
