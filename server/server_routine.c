@@ -13,10 +13,12 @@ void	login(t_server *server, char *input, int cs)
 	
 	id = strtok(input, ",");
 	passwd = strtok(NULL, ",");
+	printf("login proc\n");
 	for (t_list *tmp = server->users; tmp != NULL; tmp = tmp->next)
 	{
 		t_user *user = (t_user *)tmp->content;
-		if ((strcmp(user->id, id) == 0) && (strcmp(user->passwd, passwd) == 0))
+		if ((strncmp(user->id, id, strlen(user->id)) == 0) \
+				&& (strncmp(user->passwd, passwd, strlen(user->passwd)) == 0))
 		{
 			server->fds[cs].user = user; send(cs, "SUCCESS", 7, 0);
 			return ;

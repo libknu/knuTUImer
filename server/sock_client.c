@@ -17,6 +17,7 @@ void	client_read(t_server *server, int cs)
 	}
 	else
 	{
+		printf("%d bytes from %d, %s\n", r, cs, server->fds[cs].buf_read);
 		if (strncmp(server->fds[cs].buf_read, "login:", 6) == 0)
 			login(server, server->fds[cs].buf_read + 6, cs);
 		else if (strncmp(server->fds[cs].buf_read, "signin:", 7) == 0)
