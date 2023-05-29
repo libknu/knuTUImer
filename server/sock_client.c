@@ -41,6 +41,7 @@ void	client_read(t_server *server, int cs)
 		else
 			printf("undefined input: %s\n", server->fds[cs].buf_read);
 	}
+	memset(server->fds[cs].buf_read, 0, BUFSIZ);
 }
 
 void	client_write(t_server *server, int cs)

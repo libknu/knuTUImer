@@ -13,14 +13,15 @@ void	login(t_server *server, char *input, int cs)
 	
 	id = strtok(input, ",");
 	passwd = strtok(NULL, ",");
-	printf("login proc\n");
 	for (t_list *tmp = server->users; tmp != NULL; tmp = tmp->next)
 	{
 		t_user *user = (t_user *)tmp->content;
 		if ((strncmp(user->id, id, strlen(user->id)) == 0) \
 				&& (strncmp(user->passwd, passwd, strlen(user->passwd)) == 0))
 		{
-			server->fds[cs].user = user; send(cs, "SUCCESS", 7, 0);
+			user->fd = cs;
+			server->fds[cs].user = user;
+			send(cs, "SUCCESS", 7, 0);
 			return ;
 		}
 	}
@@ -160,7 +161,7 @@ void	focustime(t_server *server, char *input, int cs)
 
 static void markattendance(char *date, char *user, char *msg)
 {
-	if (getfocustime(date, user) == 0)
+	if (getfocustime(user, date) == 0)
 	{
 		strcat(msg, "0");
 		strcat(msg, ",");

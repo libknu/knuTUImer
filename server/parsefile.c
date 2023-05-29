@@ -25,7 +25,9 @@ static void parseuserfile(t_server* server, char *file)
 	linesize = X(-1, getdelim(&buffer, &bufsiz, '\n', userfile), "getdelim");
 	buffer[linesize - 1] = '\0';
 	strncpy(newuser->passwd, buffer, linesize);
-	newuser->elapsed = getfocustime(file, gettodaydate());
+	char *date = gettodaydate();
+	newuser->elapsed = getfocustime(file, date);
+	free(date);
 	t_list *newnode = lstnew(newuser);
 	lstadd_back(&(server->users), newnode);
 	free(buffer);

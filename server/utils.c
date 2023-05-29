@@ -44,7 +44,6 @@ long long getfocustime(char *user, char *date)
 	free(command);
 	free(buffer);
 	free(userfilepath);
-	free(date); //NOTE: check if the date is dynamically allocated
 	return elapsed;
 }
 
