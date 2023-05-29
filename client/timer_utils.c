@@ -146,14 +146,12 @@ void stopwatch_mode(int fd){ //time up
     
     char a[2048];
     move(1,1);
-    sprintf(a, "time:%d", (int)elapsed_seconds);
-    printw("%s",a);
     refresh();
     nodelay(stdscr, FALSE);
     
-    sprintf(message_to_server, "time:%d", (int)elapsed_seconds);
+    sprintf(message_to_server, "updatetime:%d", (int)elapsed_seconds);
     send(fd,message_to_server,2048,0);
-
+    recv(fd,messge_form_server,2048,0);
     if(command == '3'||command=='s'||command=='S'){
         start_study(fd);
     }else if(command=='H'||command=='h'){
@@ -297,9 +295,9 @@ void timer_mode(int fd){ //time down
     
     nodelay(stdscr, FALSE);
     
-    sprintf(message_to_server, "time:%d", (int)elapsed_seconds);
+    sprintf(message_to_server, "updatetime:%d", (int)elapsed_seconds);
     send(fd,message_to_server,2048,0);
-    
+    recv(fd,messge_form_server,2048,0);
 
     if(command == '3'||command=='s'||command=='S'){
         start_study(fd);
@@ -490,9 +488,9 @@ void pomodoro_mode(int fd){
     
     nodelay(stdscr, FALSE);
     
-    sprintf(message_to_server, "time:%d", (int)total_elapsed_seconds);
+    sprintf(message_to_server, "updatetime:%d", (int)total_elapsed_seconds);
     send(fd,message_to_server,2048,0);
-
+    recv(fd,messge_form_server,2048,0);
     if(command == '3'||command=='s'||command=='S'){
         start_study(fd);
     }else if(command=='H'||command=='h'){
