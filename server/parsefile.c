@@ -85,11 +85,11 @@ static void getgroupsinfo(t_server *server)
 				{
 					if (op_flag == 0)
 					{
-						lstadd_back(&(newgroup->op_user), node);
+						lstadd_back(&(newgroup->op_user), lstnew(node));
 						op_flag = 1;
 					}
 					else
-						lstadd_back(&(newgroup->joined_users), node);
+						lstadd_back(&(newgroup->joined_users), lstnew(node));
 					break;
 				}
 				node = node->next;

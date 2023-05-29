@@ -35,6 +35,8 @@ void	client_read(t_server *server, int cs)
 			focustime(server, server->fds[cs].buf_read + 5, cs);
 		else if (strncmp(server->fds[cs].buf_read, "attendance:", 11) == 0)
 			getattendance(server, server->fds[cs].buf_read + 11, cs);
+		else if (strncmp(server->fds[cs].buf_read, "focus:", 6) == 0)
+			focustime(server, server->fds[cs].buf_read + 6, cs);
 		else
 			printf("undefined input: %s\n", server->fds[cs].buf_read);
 	}
