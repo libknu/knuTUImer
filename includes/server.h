@@ -110,5 +110,6 @@ void		groupmember(t_server*, char*, int);
 void		groupcreate(t_server*, char*, int);
 void		focustime(t_server*, char*, int);
 void		getattendance(t_server*, char*, int);
+void		updatetime(t_server *server, char *, int);
 
 #endif

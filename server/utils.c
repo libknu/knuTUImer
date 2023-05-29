@@ -62,14 +62,20 @@ char* strjoin(const char* str1, const char* str2)
     return result;
 }
 
+t_user* unwrap_user(t_list *wr)
+{
+	return ((t_user*)((t_list*)wr->content)->content);
+}
+
 int userinthegroup(t_group *group, int fd)
 {
-	if (((t_user*)group->op_user->content)->fd == fd)
+	t_user* op_user = unwrap_user(group->op_user->content);
+	if (op_user->fd == fd)
 		return 1;
 	t_list *userlist = group->joined_users;
 	for (t_list *tmp = userlist; tmp != NULL; tmp = tmp->next)
 	{
-		if (((t_user *)tmp->content)->fd == fd)
+		if (unwrap_user((t_list*)tmp->content)->fd == fd)
 			return 1;
 	}
 	return 0;

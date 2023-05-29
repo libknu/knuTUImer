@@ -8,5 +8,6 @@ long long	getfocustime(char *user, char *date);
 char*		strjoin(const char* str1, const char* str2);
 int			userinthegroup(t_group *, int);
 char*		itoa(int);
+t_user*		unwrap_user(t_list *wr);
 
 #endif

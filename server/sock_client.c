@@ -32,8 +32,8 @@ void	client_read(t_server *server, int cs)
 			groupjoin(server, server->fds[cs].buf_read + 5, cs);
 		else if (strncmp(server->fds[cs].buf_read, "create:", 7) == 0)
 			groupcreate(server, server->fds[cs].buf_read + 7, cs);
-		else if (strncmp(server->fds[cs].buf_read, "time:", 5) == 0)
-			focustime(server, server->fds[cs].buf_read + 5, cs);
+		else if (strncmp(server->fds[cs].buf_read, "updatetime:", 5) == 0)
+			updatetime(server, server->fds[cs].buf_read + 5, cs);
 		else if (strncmp(server->fds[cs].buf_read, "attendance:", 11) == 0)
 			getattendance(server, server->fds[cs].buf_read + 11, cs);
 		else if (strncmp(server->fds[cs].buf_read, "focus:", 6) == 0)

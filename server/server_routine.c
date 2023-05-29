@@ -44,11 +44,6 @@ void	signin(t_server *server, char *input, int cs)
 	send(cs, "SUCCESS", 7, 0);
 }
 
-static t_user* unwrap_user(t_list *wr)
-{
-	return ((((t_list*)wr->content))->content);
-}
-
 void	groupchat(t_server *server, char *input, int cs)
 {
 	char *groupname;
@@ -208,4 +203,8 @@ void	getattendance(t_server *server, char *input, int cs)
 	send(cs, msg, strlen(msg), 0);
 	printf("sent -> %s\n", msg);
 	free(msg);
+}
+
+void updatetime(t_server *server, char *input, int cs)
+{
 }
