@@ -42,6 +42,11 @@ void	signin(t_server *server, char *input, int cs)
 	send(cs, "SUCCESS", 7, 0);
 }
 
+static t_user* unwrap_user(t_list *wr)
+{
+	return ((((t_list*)wr->content))->content);
+}
+
 void	groupchat(t_server *server, char *input, int cs)
 {
 	char *groupname;
@@ -58,9 +63,9 @@ void	groupchat(t_server *server, char *input, int cs)
 		t_group *group = (t_group*)tmp->content;
 		if (strcmp(group->name, groupname) == 0)
 		{
-			for (t_list* usr = group->joined_users; usr != NULL; usr = usr->next)
-				send(((t_user *)usr->content)->fd, msg, strlen(msg), 0);
-			send(((t_user *)group->op_user->content)->fd, msg, strlen(msg), 0);
+			for (t_list* usrwr = group->joined_users; usrwr != NULL; usrwr = usrwr->next)
+				send(unwrap_user(usrwr)->fd, msg, strlen(msg), 0);
+			send(unwrap_user(group->op_user)->fd, msg, strlen(msg), 0);
 			break;
 		}
 	}
@@ -96,11 +101,11 @@ void	groupmember(t_server *server, char *input, int cs)
 		if (strcmp(((t_group *)tmp->content)->name, input) == 0)
 			group = (t_group *)tmp;
 	}
-	strcat(msg, ((t_user *)group->op_user->content)->id);
+	strcat(msg, unwrap_user(((t_list*)group->op_user)->content)->id);
 	strcat(msg, ",");
-	for (t_list *tmp = group->joined_users; tmp != NULL; tmp = tmp->next)
+	for (t_list *tmpwr = group->joined_users; tmpwr != NULL; tmpwr = tmpwr->next)
 	{
-		strcat(msg, ((t_user *)tmp->content)->id);
+		strcat(msg, unwrap_user(tmpwr)->id);
 		strcat(msg, ",");
 	}
 	msg[strlen(msg) - 1] = '\0';
@@ -122,7 +127,7 @@ void	groupjoin(t_server *server, char *input, int cs)
 		if (((t_user *)tmp->content)->fd == cs)
 			user = tmp;
 	}
-	lstadd_back(&group->joined_users, user);
+	lstadd_back(&group->joined_users, lstnew(user));
 	send(cs, "SUCCESS", 7, 0);
 }
 
@@ -136,7 +141,7 @@ void	groupcreate(t_server *server, char *input, int cs)
 		if (((t_user *)tmp->content)->fd == cs)
 			user = tmp;
 	}
-	new_group->op_user = user;
+	new_group->op_user = lstnew(user);
 	new_group-> joined_users = NULL;
 	lstadd_back(&server->groups, lstnew(new_group));
 	send(cs, "SUCCESS", 7, 0);
