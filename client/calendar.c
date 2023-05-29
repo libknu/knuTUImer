@@ -85,6 +85,9 @@ void show_calendar(int fd){
     /*****************달력 그리기*******************/
 
     sprintf(message_to_server,"attendance:%d",(tm.tm_mon)+1);
+    // move(2,2);
+    // printw("%s",message_to_server);
+
     send(fd,message_to_server,2048,0);
     recv(fd, message_form_server,2048,0);
 
